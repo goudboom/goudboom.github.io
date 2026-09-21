@@ -1,0 +1,72 @@
+---
+import { t, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const section = t(Astro.props.lang).home.approach;
+---
+
+<section class="section section--surface" aria-labelledby="approach-title">
+  <div class="container">
+    <h2 id="approach-title" class="approach__title">{section.title}</h2>
+    <ol class="approach">
+      {
+        section.steps.map((step, index) => (
+          <li class="approach__step">
+            <span class="approach__number" aria-hidden="true">
+              {index + 1}
+            </span>
+            <h3 class="approach__step-title">{step.title}</h3>
+            <p>{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .approach__title {
+    margin-bottom: var(--s-7);
+  }
+
+  .approach {
+    display: grid;
+    gap: var(--s-6);
+    list-style: none;
+    padding: 0;
+  }
+
+  .approach__step {
+    display: grid;
+    align-content: start;
+    gap: var(--s-3);
+    padding-top: var(--s-5);
+    border-top: var(--rule-gold);
+  }
+
+  .approach__number {
+    font-size: var(--fs-2xl);
+    font-weight: var(--w-bold);
+    line-height: 1;
+    color: var(--c-navy);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .approach__step-title {
+    font-size: var(--fs-l);
+  }
+
+  .approach__step p {
+    color: var(--c-ink-muted);
+  }
+
+  @media (min-width: 56rem) {
+    .approach {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-6);
+    }
+  }
+</style>

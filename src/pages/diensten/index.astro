@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumbs from '../../components/Breadcrumbs.astro';
+import ServiceCards from '../../components/ServiceCards.astro';
+import ClosingCta from '../../components/ClosingCta.astro';
+import { site } from '../../site.config';
+import { t, href } from '../../i18n';
+import { organizationNode, personNode, serviceNode, breadcrumbNode } from '../../lib/schema';
+
+const lang = 'nl';
+const ui = t(lang);
+const page = ui.servicesOverview;
+
+const abs = (path: string) => new URL(path, site.url).href;
+const crumbs = [
+  { name: ui.nav.home, url: abs(href('home', lang)) },
+  { name: ui.nav.services, url: abs(href('services', lang)) },
+];
+const services = (['projectManagement', 'itConsultancy', 'agileCoaching'] as const).map((key) =>
+  serviceNode(ui.servicePages[key].title, ui.servicePages[key].seo.description, abs(href(key, lang))),
+);
+const jsonLd = [organizationNode(), personNode(), ...services, breadcrumbNode(crumbs)];
+---
+
+<BaseLayout title={page.seo.title} description={page.seo.description} lang={lang} routeKey="services" jsonLd={jsonLd}>
+  <section class="overview-intro">
+    <div class="container">
+      <Breadcrumbs lang={lang} items={crumbs} />
+      <h1 class="overview-intro__title">{page.title}</h1>
+      <div class="overview-intro__text">
+        {page.intro.map((paragraph, index) => <p class:list={{ lead: index === 0 }}>{paragraph}</p>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--navy on-navy pairs-band" aria-label={page.pairsIntro}>
+    <div class="container">
+      <p class="pairs-band__intro">{page.pairsIntro}</p>
+      <ul class="pairs">
+        {
+          page.pairs.map(([left, right]) => (
+            <li>
+              <span class="pairs__left">{left}</span>
+              <span class="pairs__sep"> // </span>
+              <span class="pairs__right">{right}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="overview-services">
+    <div class="container overview-services">
+      <p id="overview-services" class="lead">{page.outro}</p>
+      <ServiceCards lang={lang} headingLevel="h2" />
+    </div>
+  </section>
+
+  <ClosingCta lang={lang} title={ui.home.closing.title} />
+</BaseLayout>
+
+<style>
+  .overview-intro {
+    padding-block: var(--s-5) var(--section-y);
+  }
+
+  .overview-intro__title {
+    margin-top: var(--s-6);
+    max-width: 16ch;
+  }
+
+  .overview-intro__text {
+    display: grid;
+    gap: var(--s-4);
+    max-width: var(--measure);
+    margin-top: var(--s-6);
+  }
+
+  .pairs-band__intro {
+    margin-bottom: var(--s-6);
+    font-size: var(--fs-l);
+    color: var(--c-on-navy-muted);
+  }
+
+  .pairs {
+    display: grid;
+    gap: var(--s-3);
+    list-style: none;
+    padding: 0;
+    font-size: var(--fs-2xl);
+    font-weight: var(--w-bold);
+    line-height: 1.15;
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .pairs li {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: baseline;
+    gap: var(--s-3);
+    padding-block: var(--s-3);
+    border-bottom: 1px solid rgb(255 255 255 / 0.14);
+  }
+
+  .pairs__left {
+    text-align: right;
+  }
+
+  .pairs__sep {
+    color: var(--c-gold);
+    white-space: pre;
+  }
+
+  .overview-services {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  @media (max-width: 30rem) {
+    .pairs {
+      font-size: var(--fs-xl);
+    }
+  }
+</style>

@@ -1,0 +1,137 @@
+---
+// One route for both category pages (/inspiratiebank/{categorie}/) and item pages (/inspiratiebank/{slug}/).
+// getItems() fails the build when an item slug equals a category slug.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import InspirationHero from '../../components/inspiration/InspirationHero.astro';
+import InspirationGrid from '../../components/InspirationGrid.astro';
+import InspirationItem from '../../components/inspiration/InspirationItem.astro';
+import { site } from '../../site.config';
+import { t } from '../../i18n';
+import { categories, type Category } from '../../content/taxonomy';
+import { getItems, usedCategories, itemDescription, fill, type Item } from '../../lib/inspiration';
+import { organizationNode, personNode, breadcrumbNode, ids } from '../../lib/schema';
+
+type PageProps =
+  | { kind: 'category'; category: Category; items: Item[]; used: Category[] }
+  | { kind: 'item'; item: Item; prev: Item; next: Item; related: Item[] };
+
+export async function getStaticPaths() {
+  const items = await getItems();
+  const used = usedCategories(items);
+
+  const categoryPaths = used.map((category) => ({
+    params: { slug: category },
+    props: { kind: 'category', category, items: items.filter((i) => i.data.categorie === category), used },
+  }));
+
+  const itemPaths = items.map((item, index) => ({
+    params: { slug: item.id },
+    props: {
+      kind: 'item',
+      item,
+      prev: items[(index - 1 + items.length) % items.length],
+      next: items[(index + 1) % items.length],
+      related: items.filter((other) => other.id !== item.id && other.data.categorie === item.data.categorie).slice(0, 3),
+    },
+  }));
+
+  return [...categoryPaths, ...itemPaths];
+}
+
+const props = Astro.props as PageProps;
+const ui = t('nl');
+const texts = ui.inspiration;
+const base = [
+  { name: ui.nav.home, url: `${site.url}/` },
+  { name: ui.nav.inspiration, url: `${site.url}/inspiratiebank/` },
+];
+
+let title: string;
+let description: string;
+let crumbs: { name: string; url: string }[];
+let jsonLd: object[];
+
+if (props.kind === 'category') {
+  const label = categories[props.category];
+  const url = `${site.url}/inspiratiebank/${props.category}/`;
+  title = fill(texts.category.seoTitle, { Categorie: label });
+  description = fill(texts.category.intro, { categorie: label.toLowerCase() });
+  crumbs = [...base, { name: label, url }];
+  jsonLd = [
+    organizationNode(),
+    {
+      '@type': 'CollectionPage',
+      '@id': `${url}#page`,
+      url,
+      name: label,
+      description,
+      isPartOf: { '@id': `${site.url}/inspiratiebank/#page` },
+      hasPart: props.items.map((item) => ({ '@id': `${site.url}/inspiratiebank/${item.id}/#item` })),
+    },
+    breadcrumbNode(crumbs),
+  ];
+} else {
+  const { item } = props;
+  const label = categories[item.data.categorie];
+  const url = `${site.url}/inspiratiebank/${item.id}/`;
+  title = fill(texts.item.seoTitle, { Titel: item.data.titel });
+  description = itemDescription(item);
+  crumbs = [
+    ...base,
+    { name: label, url: `${site.url}/inspiratiebank/${item.data.categorie}/` },
+    { name: item.data.titel, url },
+  ];
+  const published = item.data.datum.toISOString().slice(0, 10);
+  const modified = (item.data.gewijzigd ?? item.data.datum).toISOString().slice(0, 10);
+  jsonLd = [
+    organizationNode(),
+    personNode(),
+    {
+      '@type': item.data.vorm === 'quote' ? 'Quotation' : 'Article',
+      '@id': `${url}#item`,
+      url,
+      headline: item.data.titel,
+      name: item.data.titel,
+      description,
+      inLanguage: 'nl',
+      articleSection: label,
+      genre: item.data.vorm,
+      datePublished: published,
+      dateModified: modified,
+      author: { '@id': ids.person },
+      publisher: { '@id': ids.organization },
+      mainEntityOfPage: url,
+      isPartOf: { '@id': `${site.url}/inspiratiebank/#page` },
+      ...(item.data.bron && item.data.vorm === 'quote'
+        ? { creator: { '@type': 'Person', name: item.data.bron }, author: undefined }
+        : {}),
+    },
+    breadcrumbNode(crumbs),
+  ];
+}
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd} ogType={props.kind === 'item' ? 'article' : 'website'}>
+  {
+    props.kind === 'category' ? (
+      <section class="section ins-page">
+        <div class="container">
+          <InspirationHero
+            title={categories[props.category]}
+            intro={fill(texts.category.intro, { categorie: categories[props.category].toLowerCase() })}
+            crumbs={crumbs}
+          />
+          <InspirationGrid items={props.items} usedCategories={props.used} activeCategory={props.category} />
+        </div>
+      </section>
+    ) : (
+      <InspirationItem item={props.item} prev={props.prev} next={props.next} related={props.related} crumbs={crumbs} />
+    )
+  }
+</BaseLayout>
+
+<style>
+  .ins-page {
+    padding-top: var(--s-5);
+  }
+</style>

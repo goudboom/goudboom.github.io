@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/home/Hero.astro';
+import Recognize from '../components/home/Recognize.astro';
+import Approach from '../components/home/Approach.astro';
+import Vision from '../components/home/Vision.astro';
+import InspirationTeaser from '../components/home/InspirationTeaser.astro';
+import ServiceCards from '../components/ServiceCards.astro';
+import Faq from '../components/Faq.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import { site } from '../site.config';
+import { t } from '../i18n';
+import { organizationNode, personNode, websiteNode, faqNode } from '../lib/schema';
+
+const lang = 'nl';
+const ui = t(lang);
+const home = ui.home;
+
+const jsonLd = [organizationNode(), personNode(), websiteNode(lang), faqNode(home.faq.items, `${site.url}/`)];
+---
+
+<BaseLayout title={home.seo.title} description={home.seo.description} lang={lang} routeKey="home" jsonLd={jsonLd}>
+  <Hero lang={lang} />
+  <Recognize lang={lang} />
+  {/* "Wat het oplevert" (Results.astro) is parked for now; see TEKSTEN.md › Home › Resultaten. */}
+
+  <section class="section section--navy on-navy" aria-labelledby="services-title">
+    <div class="container">
+      <h2 id="services-title" class="home-section-title">{home.services.title}</h2>
+      <ServiceCards lang={lang} />
+    </div>
+  </section>
+
+  <Approach lang={lang} />
+  <Vision lang={lang} />
+  <InspirationTeaser lang={lang} />
+
+  <section class="section" aria-labelledby="faq-title">
+    <div class="container home-faq">
+      <h2 id="faq-title">{home.faq.title}</h2>
+      <Faq items={home.faq.items} />
+    </div>
+  </section>
+
+  <ClosingCta lang={lang} title={home.closing.title} />
+</BaseLayout>
+
+<style>
+  .home-section-title {
+    margin-bottom: var(--s-7);
+  }
+
+  .home-faq {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  @media (min-width: 68rem) {
+    .home-faq {
+      grid-template-columns: 1fr 2fr;
+      gap: var(--s-8);
+    }
+  }
+</style>

@@ -1,0 +1,88 @@
+---
+// PARKED: not rendered for now (decision 2026-09-21, see TEKSTEN.md › Home › Resultaten).
+import Arrow from '../Arrow.astro';
+import { t, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const section = t(Astro.props.lang).home.results;
+---
+
+<section class="section section--navy on-navy" aria-labelledby="results-title">
+  <div class="container">
+    <h2 id="results-title" class="results__title">{section.title}</h2>
+    <ul class="results">
+      {
+        section.items.map((item) => {
+          const parts = item.figure.split('→').map((part) => part.trim());
+          return (
+            <li class="results__item">
+              <p class="results__figure">
+                {parts.length === 2 ? (
+                  <>
+                    <span>{parts[0]}</span> <Arrow class="results__arrow" /> <span>{parts[1]}</span>
+                  </>
+                ) : (
+                  item.figure
+                )}
+              </p>
+              <p class="results__text">{item.text}</p>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .results__title {
+    margin-bottom: var(--s-7);
+  }
+
+  .results {
+    display: grid;
+    gap: var(--s-6);
+    list-style: none;
+    padding: 0;
+  }
+
+  .results__item {
+    display: grid;
+    gap: var(--s-3);
+    padding-top: var(--s-5);
+    border-top: 1px solid rgb(255 255 255 / 0.18);
+  }
+
+  .results__figure {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 0.3em;
+    font-size: var(--fs-figure);
+    font-weight: var(--w-bold);
+    line-height: 1.05;
+    letter-spacing: var(--tracking-tight);
+    color: var(--c-gold);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .results__figure :global(.results__arrow svg) {
+    width: 0.7em;
+    height: 0.7em;
+  }
+
+  .results__text {
+    max-width: 34rem;
+    color: var(--c-on-navy-muted);
+  }
+
+  @media (min-width: 48rem) {
+    .results {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-7) var(--s-8);
+    }
+  }
+</style>

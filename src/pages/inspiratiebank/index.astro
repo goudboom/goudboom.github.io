@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import InspirationHero from '../../components/inspiration/InspirationHero.astro';
+import InspirationGrid from '../../components/InspirationGrid.astro';
+import { site } from '../../site.config';
+import { t } from '../../i18n';
+import { getItems, usedCategories } from '../../lib/inspiration';
+import { organizationNode, personNode, breadcrumbNode } from '../../lib/schema';
+
+const ui = t('nl');
+const page = ui.inspiration;
+const items = await getItems();
+
+const crumbs = [
+  { name: ui.nav.home, url: `${site.url}/` },
+  { name: ui.nav.inspiration, url: `${site.url}/inspiratiebank/` },
+];
+const jsonLd = [
+  organizationNode(),
+  personNode(),
+  {
+    '@type': 'CollectionPage',
+    '@id': `${site.url}/inspiratiebank/#page`,
+    url: `${site.url}/inspiratiebank/`,
+    name: page.title,
+    description: page.seo.description,
+    author: { '@id': `${site.url}/#yuri` },
+    hasPart: items.map((item) => ({ '@id': `${site.url}/inspiratiebank/${item.id}/#item` })),
+  },
+  breadcrumbNode(crumbs),
+];
+---
+
+<BaseLayout title={page.seo.title} description={page.seo.description} routeKey="inspiration" jsonLd={jsonLd}>
+  <section class="section ins-page">
+    <div class="container">
+      <InspirationHero title={page.title} intro={page.intro} crumbs={crumbs} tagline={page.tagline} />
+      <InspirationGrid items={items} usedCategories={usedCategories(items)} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ins-page {
+    padding-top: var(--s-5);
+  }
+</style>

@@ -1,0 +1,28 @@
+---
+// Block: the "Vraag voor jezelf" callout.
+import { t } from '../../i18n';
+const label = t('nl').inspiration.item.askYourself;
+---
+
+<aside class="blk-vraag">
+  <p class="eyebrow">{label}</p>
+  <div class="blk-vraag__text"><slot /></div>
+</aside>
+
+<style>
+  .blk-vraag {
+    display: grid;
+    gap: var(--s-3);
+    padding: var(--s-5);
+    background: var(--c-gold-soft);
+    border-left: 4px solid var(--c-gold);
+  }
+  .blk-vraag__text {
+    font-size: var(--fs-l);
+    font-weight: var(--w-bold);
+    line-height: var(--lh-snug);
+  }
+  .blk-vraag__text :global(p) {
+    margin: 0;
+  }
+</style>

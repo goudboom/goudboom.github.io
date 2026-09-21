@@ -1,0 +1,75 @@
+---
+// Three random Inspiratiebank items, picked at build time (a new pick on every deploy).
+import { getCollection } from 'astro:content';
+import Button from '../Button.astro';
+import InspirationCard from '../InspirationCard.astro';
+import RandomInspirationButton from '../RandomInspirationButton.astro';
+import { t, href, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const ui = t(lang);
+const section = ui.home.inspiration;
+
+const all = await getCollection('inspiratie');
+const picks = [...all].sort(() => Math.random() - 0.5).slice(0, 3);
+---
+
+<section class="section section--surface" aria-labelledby="inspiration-title">
+  <div class="container teaser">
+    <div class="teaser__intro">
+      <h2 id="inspiration-title">{section.title}</h2>
+      <p class="lead">{section.text}</p>
+      <div class="teaser__actions">
+        <RandomInspirationButton label={ui.inspiration.randomButton} />
+        <Button href={href('inspiration', 'nl')} variant="secondary">{ui.inspiration.toOverview}</Button>
+      </div>
+    </div>
+    <ul class="teaser__grid">
+      {
+        picks.map((item) => (
+          <li>
+            <InspirationCard item={item} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .teaser {
+    display: grid;
+    gap: var(--s-7);
+  }
+
+  .teaser__intro {
+    display: grid;
+    gap: var(--s-4);
+    max-width: 44rem;
+  }
+
+  .teaser__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-top: var(--s-2);
+  }
+
+  .teaser__grid {
+    display: grid;
+    gap: var(--s-4);
+    list-style: none;
+    padding: 0;
+  }
+
+  @media (min-width: 56rem) {
+    .teaser__grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-5);
+    }
+  }
+</style>

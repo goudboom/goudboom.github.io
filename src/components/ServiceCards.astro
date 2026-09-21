@@ -1,0 +1,117 @@
+---
+// The three service cards. Used on Home and on the Diensten overview.
+import Arrow from './Arrow.astro';
+import { t, href, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { lang, headingLevel = 'h3' } = Astro.props;
+const ui = t(lang);
+const Heading = headingLevel;
+
+const cards = (['projectManagement', 'itConsultancy', 'agileCoaching'] as const).map((key) => ({
+  ...ui.services.items[key],
+  url: href(key, lang),
+}));
+---
+
+<ul class="service-cards">
+  {
+    cards.map((card) => (
+      <li class="service-card">
+        <Heading class="service-card__title">{card.title}</Heading>
+        <p class="service-card__line">{card.line}</p>
+        <a class="service-card__link" href={card.url}>
+          {card.more}
+          <Arrow />
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .service-cards {
+    display: grid;
+    gap: var(--s-4);
+    list-style: none;
+    padding: 0;
+  }
+
+  .service-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    padding: var(--s-6) var(--s-5);
+    background: var(--c-white);
+    border: var(--border);
+    border-top: var(--rule-gold);
+    transition: border-color var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+  }
+
+  .service-card:hover {
+    border-color: var(--c-navy);
+    border-top-color: var(--c-gold);
+  }
+
+  .service-card__title {
+    font-size: var(--fs-xl);
+    line-height: var(--lh-snug);
+  }
+
+  .service-card__line {
+    color: var(--c-ink-muted);
+    flex: 1;
+  }
+
+  .service-card__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    margin-top: var(--s-3);
+    font-weight: var(--w-bold);
+    text-decoration: none;
+  }
+
+  /* Whole card clickable, link stays the accessible name */
+  .service-card__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .service-card__link:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--c-gold);
+  }
+
+  .service-card:focus-within {
+    outline: 3px solid var(--c-focus);
+    outline-offset: 3px;
+  }
+
+  :global(.on-navy) .service-card:focus-within {
+    outline-color: var(--c-gold);
+  }
+
+  :global(.on-navy) .service-card {
+    border-color: transparent;
+    border-top-color: var(--c-gold);
+    color: var(--c-ink);
+  }
+
+  .service-card__link:focus-visible {
+    outline: none;
+  }
+
+  @media (min-width: 56rem) {
+    .service-cards {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-5);
+    }
+  }
+</style>

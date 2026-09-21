@@ -1,0 +1,66 @@
+# Build the site and deploy it to GitHub Pages.
+# Runs on every push to main, on demand, and once a year on 1 January (so the © year in the HTML is current).
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 4 1 1 *'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      # Linux is case-sensitive: the redirect pages for /Diensten/, /Contact/ and /Inspiratiebank/ must exist here.
+      - name: Check redirect pages
+        run: |
+          for p in Home Diensten Inspiratiebank Contact Kennisbank Consultancy Beheer Agile-Lean Templates; do
+            test -f "dist/$p/index.html" || { echo "Missing redirect page: /$p/"; exit 1; }
+          done
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
+
+  # Tell Bing (and other IndexNow engines) which URLs exist. Only after go-live on goudboom.nl:
+  # set the repository variable INDEXNOW_ENABLED to "true" (Settings → Secrets and variables → Actions → Variables).
+  indexnow:
+    needs: deploy
+    if: vars.INDEXNOW_ENABLED == 'true' && github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping IndexNow with all sitemap URLs
+        run: |
+          KEY=8ccbc3c9a385cc2da9948e83a7f7b453
+          URLS=$(curl -fsSL https://goudboom.nl/sitemap-0.xml | grep -o '<loc>[^<]*</loc>' | sed 's#</\?loc>##g' | jq -R . | jq -sc .)
+          curl -fsS -X POST https://api.indexnow.org/indexnow \
+            -H 'Content-Type: application/json; charset=utf-8' \
+            -d "{\"host\":\"goudboom.nl\",\"key\":\"$KEY\",\"keyLocation\":\"https://goudboom.nl/$KEY.txt\",\"urlList\":$URLS}" \
+            -w '\nIndexNow HTTP %{http_code}\n'

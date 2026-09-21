@@ -1,0 +1,187 @@
+---
+// Shared structure of every service page:
+// positioning → Voor wie → Waar ik bij kan helpen → (model) → Uit de praktijk → Relevant → closing CTA.
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import CaseStudy from '../components/CaseStudy.astro';
+import NineGrid from '../components/NineGrid.astro';
+import ClosingCta from '../components/ClosingCta.astro';
+import { site } from '../site.config';
+import { t, href, type Lang } from '../i18n';
+import { organizationNode, personNode, serviceNode, breadcrumbNode } from '../lib/schema';
+
+type ServiceKey = 'projectManagement' | 'itConsultancy' | 'agileCoaching';
+
+interface Props {
+  lang: Lang;
+  service: ServiceKey;
+}
+
+const { lang, service } = Astro.props;
+const ui = t(lang);
+const page = ui.servicePages[service];
+const labels = ui.serviceLabels;
+const model = 'model' in page ? page.model : null;
+
+const url = new URL(href(service, lang), site.url).href;
+const crumbs = [
+  { name: ui.nav.home, url: new URL(href('home', lang), site.url).href },
+  { name: ui.nav.services, url: new URL(href('services', lang), site.url).href },
+  { name: page.title, url },
+];
+const jsonLd = [
+  organizationNode(),
+  personNode(),
+  serviceNode(page.title, page.seo.description, url),
+  breadcrumbNode(crumbs),
+];
+---
+
+<BaseLayout title={page.seo.title} description={page.seo.description} lang={lang} routeKey={service} jsonLd={jsonLd}>
+  <section class="service-intro">
+    <div class="container">
+      <Breadcrumbs lang={lang} items={crumbs} />
+      <div class="service-intro__grid">
+        <header class="service-intro__head">
+          <h1>{page.title}</h1>
+          {page.subtitle && <p class="lead">{page.subtitle}</p>}
+        </header>
+        <div class="service-intro__text">
+          {page.positioning.map((paragraph) => <p>{paragraph}</p>)}
+        </div>
+        <aside class="for-whom" aria-labelledby="for-whom-title">
+          <h2 id="for-whom-title" class="eyebrow">{labels.forWhom}</h2>
+          <p>{page.forWhom}</p>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <section class="section service-help" aria-labelledby="help-title">
+    <div class="container split">
+      <h2 id="help-title">{labels.helpWith}</h2>
+      <ul class="tri-list help-list">
+        {
+          page.helpWith.map((item) => (
+            <li>
+              {item.label && <strong>{item.label}</strong>} {item.text}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    model && (
+      <section class="section section--surface" aria-label={model.title}>
+        <div class="container">
+          <NineGrid {...model} />
+        </div>
+      </section>
+    )
+  }
+
+  <section class:list={['section', { 'section--surface': !model }]} aria-labelledby="practice-title">
+    <div class="container practice">
+      <h2 id="practice-title">{labels.practice}</h2>
+      <div class="practice__cases">
+        {page.cases.map((item) => <CaseStudy lang={lang} {...item} />)}
+      </div>
+      <p class="relevant">
+        <strong>{labels.relevant}</strong> {page.relevant}
+      </p>
+    </div>
+  </section>
+
+  <ClosingCta lang={lang} title={page.closing} />
+</BaseLayout>
+
+<style>
+  .service-intro {
+    padding-block: var(--s-5) var(--section-y);
+  }
+
+  .service-intro__grid {
+    display: grid;
+    gap: var(--s-6);
+    margin-top: var(--s-6);
+  }
+
+  .service-intro__head {
+    display: grid;
+    gap: var(--s-4);
+  }
+
+  .service-intro__text {
+    display: grid;
+    gap: var(--s-4);
+    max-width: var(--measure);
+    font-size: var(--fs-l);
+    line-height: 1.55;
+  }
+
+  .for-whom {
+    display: grid;
+    gap: var(--s-3);
+    align-self: start;
+    padding: var(--s-5);
+    background: var(--c-navy);
+    color: var(--c-on-navy);
+  }
+
+  .for-whom .eyebrow {
+    color: var(--c-on-navy-muted);
+  }
+
+  .for-whom p {
+    font-size: var(--fs-l);
+    font-weight: var(--w-bold);
+    line-height: var(--lh-snug);
+  }
+
+  .split {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .help-list {
+    display: grid;
+    gap: var(--s-4);
+    font-size: var(--fs-l);
+    line-height: 1.45;
+  }
+
+  .practice {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .practice__cases {
+    display: grid;
+    gap: var(--s-5);
+  }
+
+  .relevant {
+    color: var(--c-ink-muted);
+  }
+
+  .relevant strong {
+    color: var(--c-ink);
+  }
+
+  @media (min-width: 68rem) {
+    .service-intro__grid {
+      grid-template-columns: 7fr 4fr;
+      column-gap: var(--s-8);
+      row-gap: var(--s-6);
+    }
+    .service-intro__head {
+      grid-column: 1 / -1;
+    }
+    .split {
+      grid-template-columns: 1fr 2fr;
+      gap: var(--s-8);
+    }
+  }
+</style>

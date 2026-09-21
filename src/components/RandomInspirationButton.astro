@@ -1,0 +1,42 @@
+---
+// "Geef me random inspiratie": without JS it links to the overview, with JS it opens a random item page.
+// `plain` renders a normal link (for item navigation) instead of a button-styled link.
+import { getCollection } from 'astro:content';
+import Button from './Button.astro';
+
+interface Props {
+  label: string;
+  variant?: 'primary' | 'secondary';
+  onNavy?: boolean;
+  plain?: boolean;
+  class?: string;
+}
+
+const { label, variant = 'primary', onNavy = false, plain = false, class: className } = Astro.props;
+const slugs = JSON.stringify((await getCollection('inspiratie')).map((item) => item.id));
+---
+
+{
+  plain ? (
+    <a href="/inspiratiebank/" class={className} data-random-inspiration={slugs}>
+      {label}
+    </a>
+  ) : (
+    <Button href="/inspiratiebank/" variant={variant} onNavy={onNavy} class={className} data-random-inspiration={slugs}>
+      {label}
+    </Button>
+  )
+}
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>('[data-random-inspiration]').forEach((link) => {
+    const slugs: string[] = JSON.parse(link.dataset.randomInspiration ?? '[]');
+    link.addEventListener('click', (event) => {
+      if (!slugs.length) return;
+      const current = location.pathname.split('/').filter(Boolean).pop();
+      const pool = slugs.length > 1 ? slugs.filter((slug) => slug !== current) : slugs;
+      event.preventDefault();
+      location.href = `/inspiratiebank/${pool[Math.floor(Math.random() * pool.length)]}/`;
+    });
+  });
+</script>

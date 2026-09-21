@@ -1,0 +1,44 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { site, emailHref } from '../site.config';
+import { t } from '../i18n';
+import { organizationNode } from '../lib/schema';
+
+const lang = 'nl';
+const ui = t(lang);
+const page = ui.privacy;
+---
+
+<BaseLayout title={page.seo.title} description={page.seo.description} lang={lang} routeKey="privacy" jsonLd={[organizationNode()]}>
+  <section class="section">
+    <div class="container privacy">
+      <h1>{page.title}</h1>
+      <div class="privacy__text">
+        {page.text.map((paragraph) => <p>{paragraph}</p>)}
+        <p>{page.questionsPrefix} <a href={emailHref}>{site.email}</a>.</p>
+        <p class="privacy__company">{site.name} · {ui.footer.kvkLabel} {site.kvk} · {site.city}</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .privacy {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .privacy__text {
+    display: grid;
+    gap: var(--s-4);
+    max-width: var(--measure);
+    font-size: var(--fs-l);
+  }
+
+  .privacy__company {
+    padding-top: var(--s-4);
+    border-top: var(--border);
+    font-size: var(--fs-s);
+    color: var(--c-ink-muted);
+  }
+</style>

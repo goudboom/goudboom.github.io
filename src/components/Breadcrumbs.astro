@@ -1,0 +1,58 @@
+---
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  items: { name: string; url: string }[];
+}
+
+const { lang, items } = Astro.props;
+const ui = t(lang);
+---
+
+<nav class="crumbs" aria-label={ui.a11y.breadcrumb}>
+  <ol>
+    {
+      items.map((item, index) =>
+        index === items.length - 1 ? (
+          <li aria-current="page">{item.name}</li>
+        ) : (
+          <li>
+            <a href={item.url}>{item.name}</a>
+          </li>
+        ),
+      )
+    }
+  </ol>
+</nav>
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-1) var(--s-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-s);
+    color: var(--c-ink-muted);
+  }
+
+  .crumbs li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+  }
+
+  .crumbs li + li::before {
+    content: '›';
+    color: var(--c-ink-muted);
+  }
+
+  .crumbs a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--c-ink);
+  }
+</style>

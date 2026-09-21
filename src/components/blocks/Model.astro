@@ -1,0 +1,45 @@
+---
+// Block: a model or diagram in a quiet frame. Put a Markdown table, list or inline SVG inside.
+interface Props {
+  titel?: string;
+  onderschrift?: string;
+}
+const { titel, onderschrift } = Astro.props;
+---
+
+<figure class="blk-model">
+  {titel && <p class="blk-model__title">{titel}</p>}
+  <div class="blk-model__body"><slot /></div>
+  {onderschrift && <figcaption>{onderschrift}</figcaption>}
+</figure>
+
+<style>
+  .blk-model {
+    display: grid;
+    gap: var(--s-4);
+    padding: var(--s-5);
+    background: var(--c-surface);
+    border-top: var(--rule-gold);
+  }
+  .blk-model__title {
+    font-weight: var(--w-bold);
+    font-size: var(--fs-l);
+  }
+  .blk-model__body {
+    overflow-x: auto;
+  }
+  .blk-model__body :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .blk-model__body :global(th),
+  .blk-model__body :global(td) {
+    padding: var(--s-2) var(--s-3);
+    border: var(--border);
+    text-align: left;
+  }
+  .blk-model figcaption {
+    font-size: var(--fs-s);
+    color: var(--c-ink-muted);
+  }
+</style>

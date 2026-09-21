@@ -1,0 +1,380 @@
+---
+// Inspiratiebank: category links (work without JS via category pages), form filter (JS),
+// random highlight (JS) and the card grid.
+import InspirationCard from './InspirationCard.astro';
+import { categories, forms, formSlugs, type Category } from '../content/taxonomy';
+import { t } from '../i18n';
+import { fill, type Item } from '../lib/inspiration';
+
+interface Props {
+  items: Item[];
+  usedCategories: Category[];
+  activeCategory?: Category;
+}
+
+const { items, usedCategories, activeCategory } = Astro.props;
+const ui = t('nl').inspiration;
+const usedForms = formSlugs.filter((form) => items.some((item) => item.data.vorm === form));
+---
+
+<div class="ins" data-ins>
+  <div class="ins-random">
+    <button type="button" class="ins-random__btn" data-random-open hidden>{ui.randomButton}</button>
+    <p class="ins-random__micro" data-random-micro hidden>{ui.randomMicrocopy}</p>
+    <div class="ins-random__panel" data-random-panel hidden tabindex="-1" aria-live="polite">
+      <div class="ins-random__slot" data-random-slot></div>
+      <div class="ins-random__actions">
+        <button type="button" class="ins-random__action ins-random__action--primary" data-random-again>
+          {ui.random.again}
+        </button>
+        <a class="ins-random__action" href="#" data-random-view>{ui.random.view}</a>
+        <button type="button" class="ins-random__action ins-random__action--quiet" data-random-close>
+          {ui.random.close}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="ins-filters">
+    <nav class="ins-filter" aria-label={ui.filters.category}>
+      <p class="ins-filter__label">{ui.filters.category}</p>
+      <ul class="chips">
+        <li>
+          <a class="chip" href="/inspiratiebank/" aria-current={activeCategory ? undefined : 'page'}>
+            {ui.filters.all}
+          </a>
+        </li>
+        {
+          usedCategories.map((slug) => (
+            <li>
+              <a
+                class="chip"
+                href={`/inspiratiebank/${slug}/`}
+                aria-current={activeCategory === slug ? 'page' : undefined}
+              >
+                {categories[slug]}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="ins-filter" role="group" aria-labelledby="form-filter-label" data-form-filter hidden>
+      <p id="form-filter-label" class="ins-filter__label">{ui.filters.form}</p>
+      <ul class="chips">
+        <li>
+          <button type="button" class="chip" data-form="" aria-pressed="true">{ui.filters.all}</button>
+        </li>
+        {
+          usedForms.map((form) => (
+            <li>
+              <button type="button" class="chip" data-form={form} aria-pressed="false">
+                {forms[form]}
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+
+  <p class="ins-count" aria-live="polite" data-count data-template={ui.filters.count}>
+    {fill(ui.filters.count, { n: String(items.length) })}
+  </p>
+
+  <ul class="ins-grid">
+    {
+      items.map((item) => (
+        <li data-item={item.id} data-vorm={item.data.vorm}>
+          <InspirationCard item={item} headingLevel="h2" />
+        </li>
+      ))
+    }
+  </ul>
+  <p class="ins-empty" data-empty hidden>{ui.filters.empty}</p>
+</div>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ins]').forEach((root) => {
+    const cells = [...root.querySelectorAll<HTMLLIElement>('[data-item]')];
+    const count = root.querySelector<HTMLElement>('[data-count]')!;
+    const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+
+    // ---------- Form filter ----------
+    const group = root.querySelector<HTMLElement>('[data-form-filter]')!;
+    const buttons = [...group.querySelectorAll<HTMLButtonElement>('[data-form]')];
+    group.hidden = false;
+
+    const applyForm = (form: string) => {
+      let visible = 0;
+      for (const cell of cells) {
+        const show = !form || cell.dataset.vorm === form;
+        cell.hidden = !show;
+        if (show) visible++;
+      }
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.form === form)));
+      count.textContent = count.dataset.template!.replace('{n}', String(visible));
+      empty.hidden = visible > 0;
+      const url = new URL(location.href);
+      form ? url.searchParams.set('vorm', form) : url.searchParams.delete('vorm');
+      history.replaceState(null, '', url);
+    };
+
+    buttons.forEach((b) => b.addEventListener('click', () => applyForm(b.dataset.form ?? '')));
+    const initial = new URL(location.href).searchParams.get('vorm');
+    if (initial && buttons.some((b) => b.dataset.form === initial)) applyForm(initial);
+
+    // ---------- Random highlight ----------
+    const open = root.querySelector<HTMLButtonElement>('[data-random-open]')!;
+    const micro = root.querySelector<HTMLElement>('[data-random-micro]')!;
+    const panel = root.querySelector<HTMLElement>('[data-random-panel]')!;
+    const slot = root.querySelector<HTMLElement>('[data-random-slot]')!;
+    const view = root.querySelector<HTMLAnchorElement>('[data-random-view]')!;
+    open.hidden = false;
+    micro.hidden = false;
+    let last = '';
+
+    const show = () => {
+      const pool = cells.filter((c) => c.dataset.item !== last);
+      const pick = pool[Math.floor(Math.random() * pool.length)] ?? cells[0];
+      last = pick.dataset.item!;
+      const card = pick.querySelector('.ins-card')!.cloneNode(true) as HTMLElement;
+      card.querySelectorAll('h2').forEach((h) => {
+        const p = document.createElement('p');
+        p.className = h.className;
+        p.innerHTML = h.innerHTML;
+        h.replaceWith(p);
+      });
+      slot.replaceChildren(card);
+      view.href = `/inspiratiebank/${last}/`;
+      panel.hidden = false;
+      panel.focus({ preventScroll: true });
+      panel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    };
+
+    open.addEventListener('click', show);
+    root.querySelector('[data-random-again]')!.addEventListener('click', show);
+    root.querySelector('[data-random-close]')!.addEventListener('click', () => {
+      panel.hidden = true;
+      open.focus();
+    });
+  });
+</script>
+
+<style>
+  .ins {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  /* ---------- Random ---------- */
+  .ins-random {
+    display: grid;
+    gap: var(--s-3);
+    justify-items: start;
+  }
+
+  .ins-random__btn {
+    min-height: 3rem;
+    padding: var(--s-3) var(--s-5);
+    border: 2px solid var(--c-gold);
+    border-radius: var(--radius);
+    background: var(--c-gold);
+    color: var(--c-navy);
+    font: inherit;
+    font-size: var(--fs-s);
+    font-weight: var(--w-bold);
+    cursor: pointer;
+    transition: background-color var(--dur) var(--ease);
+  }
+
+  .ins-random__btn:hover {
+    background: var(--c-gold-hover);
+    border-color: var(--c-gold-hover);
+  }
+
+  .ins-random__micro {
+    font-size: var(--fs-s);
+    color: var(--c-ink-muted);
+  }
+
+  .ins-random__panel {
+    width: 100%;
+    display: grid;
+    gap: var(--s-4);
+    margin-top: var(--s-3);
+    padding: var(--s-4);
+    background: var(--c-navy);
+  }
+
+  .ins-random__panel[hidden] {
+    display: none;
+  }
+
+  .ins-random__panel:focus-visible {
+    outline-color: var(--c-gold);
+  }
+
+  /* The cloned card, set large */
+  .ins-random__slot :global(.ins-card) {
+    padding: var(--s-6) var(--s-5);
+    font-size: var(--fs-l);
+  }
+
+  .ins-random__slot :global(.ins-card__title) {
+    font-size: var(--fs-2xl);
+  }
+
+  .ins-random__slot :global(.ins-card__title a::after) {
+    display: none;
+  }
+
+  .ins-random__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+
+  .ins-random__action {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: var(--s-2) var(--s-4);
+    border: 2px solid var(--c-on-navy);
+    border-radius: var(--radius);
+    background: transparent;
+    color: var(--c-on-navy);
+    font: inherit;
+    font-size: var(--fs-s);
+    font-weight: var(--w-bold);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .ins-random__action:hover {
+    background: var(--c-white);
+    color: var(--c-navy);
+  }
+
+  .ins-random__action--primary {
+    background: var(--c-gold);
+    border-color: var(--c-gold);
+    color: var(--c-navy);
+  }
+
+  .ins-random__action--primary:hover {
+    background: var(--c-gold-hover);
+    border-color: var(--c-gold-hover);
+  }
+
+  .ins-random__action--quiet {
+    margin-left: auto;
+    border-color: transparent;
+  }
+
+  .ins-random__action:focus-visible {
+    outline-color: var(--c-gold);
+  }
+
+  /* ---------- Filters ---------- */
+  .ins-filters {
+    display: grid;
+    gap: var(--s-4);
+    padding-block: var(--s-5);
+    border-block: var(--border);
+  }
+
+  .ins-filter {
+    display: grid;
+    gap: var(--s-2);
+  }
+
+  .ins-filter[hidden] {
+    display: none;
+  }
+
+  .ins-filter__label {
+    font-size: var(--fs-xs);
+    font-weight: var(--w-bold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: var(--s-1) var(--s-4);
+    border: 1px solid var(--c-line);
+    border-radius: 999px;
+    background: var(--c-white);
+    color: var(--c-ink);
+    font: inherit;
+    font-size: var(--fs-s);
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+
+  .chip:hover {
+    border-color: var(--c-navy);
+  }
+
+  .chip[aria-current='page'],
+  .chip[aria-pressed='true'] {
+    background: var(--c-navy);
+    border-color: var(--c-navy);
+    color: var(--c-white);
+    font-weight: var(--w-bold);
+  }
+
+  /* ---------- Grid ---------- */
+  .ins-count {
+    font-size: var(--fs-s);
+    color: var(--c-ink-muted);
+  }
+
+  .ins-grid {
+    display: grid;
+    gap: var(--s-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ins-grid > li[hidden] {
+    display: none;
+  }
+
+  .ins-empty {
+    color: var(--c-ink-muted);
+  }
+
+  @media (min-width: 40rem) {
+    .ins-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 68rem) {
+    .ins-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-5);
+    }
+    .ins-filters {
+      grid-template-columns: auto 1fr;
+      column-gap: var(--s-8);
+    }
+  }
+</style>

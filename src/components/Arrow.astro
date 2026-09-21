@@ -1,0 +1,25 @@
+---
+// Right arrow drawn as SVG: the Latin font subset has no "→" glyph.
+// Screen readers get the character itself.
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<span class:list={['arrow', className]}
+  ><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"
+    ><path d="M3 12h17M14 6l6 6-6 6"></path></svg
+  ><span class="visually-hidden">→</span></span
+>
+
+<style>
+  .arrow {
+    display: inline-flex;
+    vertical-align: middle;
+  }
+  .arrow svg {
+    width: 0.8em;
+    height: 0.8em;
+  }
+</style>

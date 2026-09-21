@@ -1,0 +1,299 @@
+---
+// One inspiration item page: the text (with building blocks), source, share, prev/next/random, related items.
+import { render } from 'astro:content';
+import Breadcrumbs from '../Breadcrumbs.astro';
+import Arrow from '../Arrow.astro';
+import InspirationCard from '../InspirationCard.astro';
+import RandomInspirationButton from '../RandomInspirationButton.astro';
+import { blocks } from '../blocks';
+import { site } from '../../site.config';
+import { t } from '../../i18n';
+import { categories, forms } from '../../content/taxonomy';
+import { fill, type Item } from '../../lib/inspiration';
+
+interface Props {
+  item: Item;
+  prev: Item;
+  next: Item;
+  related: Item[];
+  crumbs: { name: string; url: string }[];
+}
+
+const { item, prev, next, related, crumbs } = Astro.props;
+const ui = t('nl');
+const labels = ui.inspiration.item;
+const { Content } = await render(item);
+const { titel, categorie, vorm, bron } = item.data;
+const url = `${site.url}/inspiratiebank/${item.id}/`;
+const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+---
+
+<article class:list={['item', `item--${vorm}`]}>
+  <div class="container item__container">
+    <Breadcrumbs lang="nl" items={crumbs} />
+
+    <header class="item__head">
+      <p class="item__meta">
+        <span>{forms[vorm]}</span>
+        <span aria-hidden="true">·</span>
+        <a href={`/inspiratiebank/${categorie}/`}>{categories[categorie]}</a>
+      </p>
+      <h1 class="item__title">{titel}</h1>
+    </header>
+
+    <div class="item__body">
+      {
+        vorm === 'quote' ? (
+          <blockquote class="item__quote">
+            <Content components={blocks} />
+          </blockquote>
+        ) : (
+          <Content components={blocks} />
+        )
+      }
+      {bron && <p class="item__source">— {bron}</p>}
+    </div>
+
+    <div class="item__actions">
+      <a class="item__share" href={shareUrl} target="_blank" rel="noopener">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+          <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+        </svg>
+        {labels.share}
+      </a>
+    </div>
+
+    <nav class="item__nav" aria-label={ui.nav.inspiration}>
+      <a class="item__nav-link" href={`/inspiratiebank/${prev.id}/`} rel="prev">
+        <span class="item__nav-label">{labels.prev}</span>
+        <span class="item__nav-title">{prev.data.titel}</span>
+      </a>
+      <RandomInspirationButton label={labels.random} plain class="item__nav-random" />
+      <a class="item__nav-link item__nav-link--next" href={`/inspiratiebank/${next.id}/`} rel="next">
+        <span class="item__nav-label">{labels.next}</span>
+        <span class="item__nav-title">{next.data.titel}</span>
+      </a>
+    </nav>
+
+    <p class="item__back">
+      <a href="/inspiratiebank/">{labels.back} <Arrow /></a>
+    </p>
+  </div>
+</article>
+
+{
+  related.length > 0 && (
+    <section class="section section--surface" aria-labelledby="related-title">
+      <div class="container">
+        <h2 id="related-title" class="related__title">
+          {fill(labels.related, { categorie: categories[categorie].toLowerCase() })}
+        </h2>
+        <ul class="related">
+          {related.map((other) => (
+            <li>
+              <InspirationCard item={other} />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .item {
+    padding-block: var(--s-5) var(--section-y);
+  }
+
+  .item__container {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .item__head,
+  .item__body,
+  .item__actions,
+  .item__nav,
+  .item__back {
+    max-width: 44rem;
+  }
+
+  .item__head {
+    display: grid;
+    gap: var(--s-3);
+    margin-top: var(--s-4);
+  }
+
+  .item__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    font-size: var(--fs-xs);
+    font-weight: var(--w-bold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+
+  .item__meta a {
+    color: var(--c-ink);
+  }
+
+  .item__body {
+    display: grid;
+    gap: var(--s-5);
+    font-size: var(--fs-l);
+    line-height: 1.6;
+  }
+
+  /* Plain Markdown lists only; building blocks style their own lists */
+  .item__body > :global(ol),
+  .item__body > :global(ul) {
+    display: grid;
+    gap: var(--s-2);
+    margin: 0;
+    padding-left: 1.4rem;
+  }
+
+  .item__body > :global(ol > li::marker),
+  .item__body > :global(ul > li::marker) {
+    font-weight: var(--w-bold);
+  }
+
+  .item__body :global(h2) {
+    font-size: var(--fs-xl);
+    margin-top: var(--s-4);
+  }
+
+  /* Question: the question itself is the page */
+  .item--vraag .item__body {
+    font-size: var(--fs-2xl);
+    font-weight: var(--w-bold);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .item__quote {
+    position: relative;
+    margin: 0;
+    padding-top: var(--s-7);
+    font-size: var(--fs-2xl);
+    font-weight: var(--w-bold);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .item__quote::before {
+    content: '“';
+    position: absolute;
+    top: -0.2em;
+    left: -0.05em;
+    font-size: 6rem;
+    line-height: 1;
+    color: var(--c-gold);
+  }
+
+  .item__quote :global(p) {
+    margin: 0;
+  }
+
+  .item__source {
+    color: var(--c-ink-muted);
+    font-size: var(--fs-m);
+  }
+
+  .item__share {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 2.75rem;
+    padding: var(--s-2) var(--s-4);
+    border: 2px solid var(--c-navy);
+    border-radius: var(--radius);
+    font-size: var(--fs-s);
+    font-weight: var(--w-bold);
+    text-decoration: none;
+  }
+
+  .item__share:hover {
+    background: var(--c-navy);
+    color: var(--c-white);
+  }
+
+  .item__nav {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: var(--s-4);
+    padding-block: var(--s-5);
+    border-block: var(--border);
+  }
+
+  .item__nav-link {
+    display: grid;
+    gap: var(--s-1);
+    min-height: 2.75rem;
+    text-decoration: none;
+  }
+
+  .item__nav-link--next {
+    text-align: right;
+  }
+
+  .item__nav-label {
+    font-size: var(--fs-xs);
+    font-weight: var(--w-bold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+
+  .item__nav-title {
+    font-weight: var(--w-bold);
+  }
+
+  .item__nav-link:hover .item__nav-title {
+    text-decoration: underline;
+    text-decoration-color: var(--c-gold);
+  }
+
+  .item__nav :global(.item__nav-random) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: var(--s-2) var(--s-4);
+    border-radius: 999px;
+    background: var(--c-gold);
+    color: var(--c-navy);
+    font-size: var(--fs-s);
+    font-weight: var(--w-bold);
+    text-decoration: none;
+  }
+
+  .item__back a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 2.75rem;
+    font-weight: var(--w-bold);
+  }
+
+  .related__title {
+    margin-bottom: var(--s-6);
+  }
+
+  .related {
+    display: grid;
+    gap: var(--s-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 56rem) {
+    .related {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-5);
+    }
+  }
+</style>

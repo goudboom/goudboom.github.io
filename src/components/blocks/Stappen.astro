@@ -1,0 +1,32 @@
+---
+// Block: numbered steps. Wrap a Markdown ordered list: <Stappen>1. … 2. …</Stappen>
+---
+
+<div class="blk-stappen"><slot /></div>
+
+<style>
+  .blk-stappen :global(ol) {
+    display: grid;
+    gap: var(--s-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    counter-reset: stap;
+  }
+  .blk-stappen :global(li) {
+    counter-increment: stap;
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: var(--s-3);
+    align-items: baseline;
+    font-size: var(--fs-l);
+  }
+  .blk-stappen :global(li)::before {
+    content: counter(stap);
+    padding-top: var(--s-1);
+    border-top: var(--rule-gold);
+    font-size: var(--fs-xl);
+    font-weight: var(--w-bold);
+    text-align: center;
+  }
+</style>

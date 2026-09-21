@@ -1,0 +1,56 @@
+---
+// Heading block shared by the overview and category pages.
+import Breadcrumbs from '../Breadcrumbs.astro';
+
+interface Props {
+  title: string;
+  intro: string;
+  crumbs: { name: string; url: string }[];
+  tagline?: string[];
+}
+
+const { title, intro, crumbs, tagline } = Astro.props;
+---
+
+<header class="ins-hero">
+  <Breadcrumbs lang="nl" items={crumbs} />
+  <h1>{title}</h1>
+  <p class="lead">{intro}</p>
+  {
+    tagline && (
+      <p class="ins-hero__tagline">
+        {tagline.map((word, index) => (
+          <>
+            {index > 0 && <span class="ins-hero__sep"> // </span>}
+            <span>{word}</span>
+          </>
+        ))}
+      </p>
+    )
+  }
+</header>
+
+<style>
+  .ins-hero {
+    display: grid;
+    gap: var(--s-4);
+    max-width: 44rem;
+    margin-bottom: var(--s-7);
+  }
+
+  .ins-hero h1 {
+    margin-top: var(--s-4);
+  }
+
+  .ins-hero__tagline {
+    font-size: var(--fs-s);
+    font-weight: var(--w-bold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+  }
+
+  .ins-hero__sep {
+    color: var(--c-ink-muted);
+    white-space: pre;
+  }
+</style>

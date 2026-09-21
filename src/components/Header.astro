@@ -1,0 +1,319 @@
+---
+import Button from './Button.astro';
+import logo from '../assets/logo/logo-donker-naast-tekst.svg';
+import { lunchMailto } from '../site.config';
+import { t, href, routes, liveLangs, type Lang, type RouteKey } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  routeKey?: RouteKey;
+}
+
+const { lang, routeKey } = Astro.props;
+const ui = t(lang);
+const path = Astro.url.pathname;
+
+const items: { key: RouteKey; label: string }[] = [
+  { key: 'home', label: ui.nav.home },
+  { key: 'services', label: ui.nav.services },
+  { key: 'inspiration', label: ui.nav.inspiration },
+  { key: 'contact', label: ui.nav.contact },
+];
+
+// A nav item is current for its own page and everything below it (home only for itself).
+function isCurrent(key: RouteKey): boolean {
+  const target = href(key, lang);
+  return key === 'home' ? path === target : path.startsWith(target);
+}
+
+const otherLang: Lang = lang === 'nl' ? 'en' : 'nl';
+const otherHref = routeKey ? (routes[routeKey][otherLang] ?? href('home', otherLang)) : href('home', otherLang);
+const showLangSwitch = liveLangs.includes(otherLang);
+const lunch = lunchMailto(ui.cta.lunchSubject, ui.cta.lunchBody);
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a href={href('home', lang)} class="site-header__logo" aria-label={ui.a11y.logoLabel}>
+      <img src={logo.src} width="270" height="36" alt="" />
+    </a>
+
+    <button
+      class="site-header__toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      data-open-label={ui.a11y.menuOpen}
+      data-close-label={ui.a11y.menuClose}
+    >
+      <span class="site-header__burger" aria-hidden="true"></span>
+      <span class="site-header__toggle-label">{ui.a11y.menuOpen}</span>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label={ui.a11y.mainNav}>
+      <ul class="site-nav__list">
+        {
+          items.map((item) => (
+            <li>
+              <a
+                href={href(item.key, lang)}
+                class="site-nav__link"
+                aria-current={isCurrent(item.key) ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      {
+        showLangSwitch && (
+          <div class="site-nav__lang">
+            <span class="site-nav__lang-current" aria-current="true">
+              {lang.toUpperCase()}
+            </span>
+            <span aria-hidden="true">·</span>
+            <a href={otherHref} hreflang={otherLang} lang={otherLang} aria-label={ui.a11y.langSwitchLabel}>
+              {otherLang.toUpperCase()}
+            </a>
+          </div>
+        )
+      }
+    </nav>
+
+    <Button href={lunch} class="site-header__cta">{ui.cta.lunch}</Button>
+  </div>
+</header>
+
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.site-header__toggle');
+  const nav = document.getElementById('site-nav');
+  if (toggle && nav) {
+    const label = toggle.querySelector('.site-header__toggle-label')!;
+    const setOpen = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      label.textContent = open ? toggle.dataset.closeLabel! : toggle.dataset.openLabel!;
+      nav.classList.toggle('is-open', open);
+    };
+    toggle.addEventListener('click', () => setOpen(toggle.getAttribute('aria-expanded') !== 'true'));
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: var(--c-white);
+    border-bottom: var(--border);
+  }
+
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: 0 var(--s-3);
+    min-height: var(--header-h);
+  }
+
+  .site-header__logo {
+    flex-shrink: 0;
+    margin-right: auto;
+    padding-block: var(--s-2);
+  }
+
+  .site-header__logo img {
+    width: auto;
+    height: 1.5rem;
+  }
+
+  /* ---------- Toggle (mobile and tablet) ---------- */
+  .site-header__toggle {
+    display: none;
+  }
+
+  :global(.js) .site-header__toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 2.75rem;
+    padding: 0 var(--s-3);
+    border: 0;
+    background: none;
+    color: var(--c-navy);
+    font: inherit;
+    font-size: var(--fs-s);
+    font-weight: var(--w-bold);
+    white-space: nowrap;
+    cursor: pointer;
+  }
+
+  .site-header__burger,
+  .site-header__burger::before,
+  .site-header__burger::after {
+    display: block;
+    width: 1.25rem;
+    height: 2px;
+    background: currentColor;
+    transition: transform var(--dur) var(--ease), background-color var(--dur) var(--ease);
+  }
+
+  .site-header__burger {
+    position: relative;
+  }
+
+  .site-header__burger::before,
+  .site-header__burger::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+
+  .site-header__burger::before {
+    top: -6px;
+  }
+  .site-header__burger::after {
+    top: 6px;
+  }
+
+  [aria-expanded='true'] .site-header__burger {
+    background: transparent;
+  }
+  [aria-expanded='true'] .site-header__burger::before {
+    transform: translateY(6px) rotate(45deg);
+  }
+  [aria-expanded='true'] .site-header__burger::after {
+    transform: translateY(-6px) rotate(-45deg);
+  }
+
+  /* ---------- Navigation: small screens ---------- */
+  .site-nav {
+    flex-basis: 100%;
+    order: 10;
+    padding-bottom: var(--s-4);
+  }
+
+  .site-header__inner {
+    flex-wrap: wrap;
+  }
+
+  :global(.js) .site-nav {
+    display: none;
+  }
+
+  :global(.js) .site-nav.is-open {
+    display: block;
+    border-top: var(--border);
+    padding-top: var(--s-2);
+  }
+
+  .site-nav__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-nav__link {
+    display: block;
+    padding: var(--s-3) 0;
+    font-size: var(--fs-l);
+    font-weight: var(--w-bold);
+    text-decoration: none;
+  }
+
+  .site-nav__link[aria-current='page'] {
+    text-decoration: underline;
+    text-decoration-color: var(--c-gold);
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.35em;
+  }
+
+  .site-nav__lang {
+    display: flex;
+    gap: var(--s-2);
+    align-items: center;
+    padding-top: var(--s-3);
+    font-size: var(--fs-s);
+    color: var(--c-ink-muted);
+  }
+
+  .site-nav__lang a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    min-width: 2.75rem;
+    justify-content: center;
+    color: var(--c-ink);
+    font-weight: var(--w-bold);
+  }
+
+  .site-nav__lang-current {
+    font-weight: var(--w-bold);
+    color: var(--c-ink);
+  }
+
+  /* The header CTA lives in the bottom call bar on phones */
+  .site-header :global(.site-header__cta) {
+    display: none;
+  }
+
+  @media (min-width: 30rem) {
+    .site-header__logo img {
+      height: 1.75rem;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .site-header__logo img {
+      height: 2rem;
+    }
+    .site-header :global(.site-header__cta) {
+      display: inline-flex;
+      min-height: 2.75rem;
+      padding-inline: var(--s-4);
+    }
+  }
+
+  /* ---------- Navigation: inline on wide screens ---------- */
+  @media (min-width: 68rem) {
+    .site-header__inner {
+      flex-wrap: nowrap;
+      column-gap: var(--s-5);
+    }
+
+    :global(.js) .site-header__toggle {
+      display: none;
+    }
+
+    .site-nav,
+    :global(.js) .site-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--s-5);
+      flex-basis: auto;
+      order: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .site-nav__list {
+      display: flex;
+      gap: var(--s-5);
+    }
+
+    .site-nav__link {
+      padding: var(--s-2) 0;
+      font-size: var(--fs-s);
+    }
+
+    .site-nav__lang {
+      padding: 0 0 0 var(--s-5);
+      border-left: var(--border);
+    }
+  }
+</style>

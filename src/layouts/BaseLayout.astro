@@ -1,0 +1,54 @@
+---
+import '../styles/tokens.css';
+import '../styles/base.css';
+import Seo from '../components/Seo.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CallBar from '../components/CallBar.astro';
+import { t, type Lang, type RouteKey } from '../i18n';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: Lang;
+  routeKey?: RouteKey;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  jsonLd?: object | object[];
+}
+
+const { lang = 'nl', ...seo } = Astro.props;
+const ui = t(lang);
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>document.documentElement.classList.add('js');</script>
+    <link rel="preload" href="/fonts/source-sans-3-latin-wght.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="theme-color" content="#101629" />
+    <Seo lang={lang} {...seo} />
+    <slot name="head" />
+  </head>
+  <body>
+    <a class="skip-link" href="#inhoud">{ui.a11y.skipLink}</a>
+    <Header lang={lang} routeKey={seo.routeKey} />
+    <main id="inhoud" tabindex="-1">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+    <CallBar lang={lang} />
+
+  </body>
+</html>
+
+<style>
+  main:focus {
+    outline: none;
+  }
+</style>

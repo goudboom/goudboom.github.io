@@ -1,0 +1,98 @@
+---
+import { Image } from 'astro:assets';
+import portrait from '../../assets/foto/yuri-portret.jpg';
+import { t, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const ui = t(Astro.props.lang);
+const section = ui.home.recognize;
+---
+
+<section class="section section--surface" aria-labelledby="recognize-title">
+  <div class="container recognize">
+    <h2 id="recognize-title">{section.title}</h2>
+    <ul class="recognize__list tri-list">
+      {section.items.map((item) => <li>{item}</li>)}
+    </ul>
+    <div class="recognize__closing">
+      <Image
+        class="recognize__face"
+        src={portrait}
+        alt=""
+        width={240}
+        loading="lazy"
+      />
+      <p>{section.closing}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .recognize {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .recognize__list {
+    display: grid;
+    gap: var(--s-4);
+    font-size: var(--fs-l);
+    line-height: 1.45;
+  }
+
+  .recognize__list li {
+    max-width: 34rem;
+  }
+
+  .recognize__closing {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: var(--s-5);
+    padding-top: var(--s-6);
+    border-top: var(--border);
+  }
+
+  /* Round crop: a nod to the circle in the logo */
+  .recognize__closing :global(.recognize__face) {
+    width: 4.5rem;
+    height: 4.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 18%;
+    box-shadow: 0 0 0 3px var(--c-surface), 0 0 0 5px var(--c-gold);
+  }
+
+  .recognize__closing p {
+    max-width: 40rem;
+    font-size: var(--fs-xl);
+    font-weight: var(--w-bold);
+    line-height: var(--lh-snug);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  @media (min-width: 48rem) {
+    .recognize__list {
+      grid-template-columns: 1fr 1fr;
+      gap: var(--s-5) var(--s-7);
+    }
+    .recognize__closing :global(.recognize__face) {
+      width: 6rem;
+      height: 6rem;
+    }
+  }
+
+  @media (min-width: 68rem) {
+    .recognize {
+      grid-template-columns: 1fr 2fr;
+      column-gap: var(--s-8);
+    }
+    .recognize__list,
+    .recognize__closing {
+      grid-column: 2;
+    }
+  }
+</style>

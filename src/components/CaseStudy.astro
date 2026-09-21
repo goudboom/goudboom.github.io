@@ -1,0 +1,90 @@
+---
+// One practice case: title + De situatie / Mijn aanpak / Het resultaat, scannable in three columns.
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  situation: string;
+  approach: string;
+  result: string;
+}
+
+const { lang, title, situation, approach, result } = Astro.props;
+const labels = t(lang).serviceLabels;
+---
+
+<article class="case">
+  <h3 class="case__title">{title}</h3>
+  <dl class="case__parts">
+    <div>
+      <dt>{labels.situation}</dt>
+      <dd>{situation}</dd>
+    </div>
+    <div>
+      <dt>{labels.approach}</dt>
+      <dd>{approach}</dd>
+    </div>
+    <div class="case__result">
+      <dt>{labels.result}</dt>
+      <dd>{result}</dd>
+    </div>
+  </dl>
+</article>
+
+<style>
+  .case {
+    display: grid;
+    gap: var(--s-5);
+    padding: var(--s-6) var(--s-5);
+    background: var(--c-white);
+    border: var(--border);
+  }
+
+  .case__title {
+    font-size: var(--fs-xl);
+  }
+
+  .case__parts {
+    display: grid;
+    gap: var(--s-5);
+  }
+
+  .case__parts > div {
+    display: grid;
+    align-content: start;
+    gap: var(--s-2);
+  }
+
+  .case__parts dt {
+    font-size: var(--fs-xs);
+    font-weight: var(--w-bold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+
+  .case__parts dd {
+    margin: 0;
+  }
+
+  /* The result is what a manager scans for */
+  .case__result {
+    padding-left: var(--s-4);
+    border-left: var(--rule-gold);
+  }
+
+  .case__result dd {
+    font-weight: var(--w-bold);
+  }
+
+  @media (min-width: 56rem) {
+    .case {
+      padding: var(--s-7) var(--s-6);
+    }
+    .case__parts {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-6);
+    }
+  }
+</style>

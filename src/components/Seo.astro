@@ -1,0 +1,68 @@
+---
+// Per-page <head> metadata: title, description, canonical, hreflang, Open Graph, Twitter, JSON-LD.
+import { site } from '../site.config';
+import { t, routes, liveLangs, type Lang, type RouteKey } from '../i18n';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  /** Route key for hreflang alternates; omit for pages outside the route map (items, categories). */
+  routeKey?: RouteKey;
+  ogType?: 'website' | 'article';
+  noindex?: boolean;
+  jsonLd?: object | object[];
+}
+
+const { title, description, lang, routeKey, ogType = 'website', noindex = false, jsonLd } = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, site.url).href;
+const alternates = routeKey
+  ? (Object.entries(routes[routeKey]) as [Lang, string | null][]).filter(
+      ([altLang, path]) => path !== null && liveLangs.includes(altLang),
+    )
+  : [];
+const hasAlternates = alternates.length > 1;
+// Default share image in the house style (1200×630), rendered from the Home hero text.
+const ogImage = `${site.url}/og/goudboom.png`;
+const ogImageAlt = `${site.name} — ${t(lang).home.hero.title.replace(/\u00AD/g, '')}`;
+const graph = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+{noindex && <meta name="robots" content="noindex" />}
+
+{
+  hasAlternates &&
+    alternates.map(([altLang, path]) => (
+      <link rel="alternate" hreflang={altLang} href={new URL(path!, site.url).href} />
+    ))
+}
+{hasAlternates && <link rel="alternate" hreflang="x-default" href={new URL(routes[routeKey!].nl, site.url).href} />}
+
+<meta property="og:type" content={ogType} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:locale" content={t(lang).meta.locale} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={ogImageAlt} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content={ogImage} />
+<meta name="twitter:image:alt" content={ogImageAlt} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+
+{
+  graph.length > 0 && (
+    <script
+      type="application/ld+json"
+      set:html={JSON.stringify({ '@context': 'https://schema.org', '@graph': graph })}
+    />
+  )
+}

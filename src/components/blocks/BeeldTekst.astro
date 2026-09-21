@@ -1,0 +1,50 @@
+---
+// Block: image next to text. kant = 'links' | 'rechts' (image side on wide screens).
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  kant?: 'links' | 'rechts';
+}
+
+const { src, alt, kant = 'links' } = Astro.props;
+---
+
+<div class:list={['blk-bt', `blk-bt--${kant}`]}>
+  <Picture
+    src={src}
+    alt={alt}
+    formats={['avif', 'webp']}
+    fallbackFormat="jpg"
+    widths={[320, 540, 800]}
+    width={800}
+    sizes="(min-width: 48rem) 21rem, calc(100vw - 2rem)"
+    loading="lazy"
+  />
+  <div class="blk-bt__text"><slot /></div>
+</div>
+
+<style>
+  .blk-bt {
+    display: grid;
+    gap: var(--s-5);
+    align-items: center;
+  }
+  .blk-bt :global(img) {
+    width: 100%;
+  }
+  .blk-bt__text {
+    display: grid;
+    gap: var(--s-3);
+  }
+  @media (min-width: 48rem) {
+    .blk-bt {
+      grid-template-columns: 1fr 1fr;
+    }
+    .blk-bt--rechts :global(picture) {
+      order: 2;
+    }
+  }
+</style>

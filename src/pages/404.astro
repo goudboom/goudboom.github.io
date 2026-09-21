@@ -1,0 +1,55 @@
+---
+// GitHub Pages serves this one file for every missing URL (Dutch and English; English follows in phase 6).
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Button from '../components/Button.astro';
+import RandomInspirationButton from '../components/RandomInspirationButton.astro';
+import { t, href } from '../i18n';
+import { oldUrls } from '../redirects';
+
+const lang = 'nl';
+const ui = t(lang);
+const page = ui.notFound;
+---
+
+<BaseLayout title={page.seoTitle} description={page.text} lang={lang} noindex>
+  <section class="section not-found">
+    <div class="container not-found__inner">
+      <p class="not-found__code" aria-hidden="true">404</p>
+      <h1>{page.title}</h1>
+      <p class="lead">{page.text}</p>
+      <div class="not-found__actions">
+        <Button href={href('home', lang)}>{page.home}</Button>
+        <RandomInspirationButton label={ui.inspiration.randomButton} variant="secondary" />
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<script is:inline define:vars={{ oldUrls }}>
+  // Safety net for old URLs of the previous site (the static redirect pages normally catch them first).
+  const path = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
+  const match = Object.entries(oldUrls).find(([from]) => from.toLowerCase() === path.toLowerCase());
+  if (match) location.replace(match[1]);
+</script>
+
+<style>
+  .not-found__inner {
+    display: grid;
+    gap: var(--s-5);
+    max-width: 44rem;
+  }
+
+  .not-found__code {
+    font-size: var(--fs-figure);
+    font-weight: var(--w-bold);
+    line-height: 1;
+    color: var(--c-ink-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .not-found__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-3);
+  }
+</style>

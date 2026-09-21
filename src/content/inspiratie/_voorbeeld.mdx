@@ -1,0 +1,47 @@
+---
+# VOORBEELD — dit bestand wordt niet gepubliceerd (bestandsnamen die met _ beginnen worden overgeslagen).
+# Kopieer het naar een nieuwe naam, bijvoorbeeld "wie-is-de-eigenaar.mdx"; die naam wordt de URL:
+# /inspiratiebank/wie-is-de-eigenaar/
+#
+# Verplicht: titel (max. 60 tekens), categorie, vorm, datum.
+# categorie: leiderschap | teams-en-samenwerking | verandering | mindset-en-groei | werkplezier | regie-en-beheer | agile-en-lean
+# vorm:      gedachte | vraag | model | quote | tip
+# Optioneel: bron (auteur/herkomst), afbeelding + afbeeldingAlt (kaartje en pagina), omschrijving (max. 155 tekens,
+#            anders wordt de eerste zin gebruikt), gewijzigd (datum van de laatste inhoudelijke wijziging).
+titel: Voorbeeld van een rijke itempagina
+categorie: teams-en-samenwerking
+vorm: model
+datum: 2026-09-21
+omschrijving: Een voorbeeld van alle bouwblokken die een item van de Inspiratiebank kan gebruiken.
+---
+
+{/* Een eenvoudig item is gewoon een .md-bestand met platte tekst. Gebruik .mdx alleen als je bouwblokken nodig hebt. */}
+
+{/* Afbeeldingen: zet ze in src/assets/inspiratie/<slug>/ en importeer ze bovenaan, bijvoorbeeld:
+import bord from '../../assets/inspiratie/wie-is-de-eigenaar/bord.jpg';
+Gebruik daarna: <Beeld src={bord} alt="Beschrijving van wat er te zien is" onderschrift="Optioneel onderschrift" />
+Of naast tekst: <BeeldTekst src={bord} alt="…" kant="rechts">Tekst naast het beeld.</BeeldTekst>
+Of meerdere: <Galerij beelden={[{ src: bord, alt: '…' }, { src: foto2, alt: '…' }]} /> */}
+
+Een gewone alinea. Korte zinnen, aanspreekvorm "je".
+
+<Citaat bron="Naam van de bron">Een citaat dat je wilt uitlichten.</Citaat>
+
+<Stappen>
+
+1. Eerste stap
+2. Tweede stap
+3. Derde stap
+
+</Stappen>
+
+<Model titel="Naam van het model" onderschrift="Korte uitleg onder het model.">
+
+| | Kolom A | Kolom B |
+|---|---|---|
+| Rij 1 | … | … |
+| Rij 2 | … | … |
+
+</Model>
+
+<VraagVoorJezelf>Welke vraag wil je de lezer meegeven?</VraagVoorJezelf>

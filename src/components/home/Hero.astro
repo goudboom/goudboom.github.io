@@ -1,0 +1,137 @@
+---
+import Button from '../Button.astro';
+import { site, lunchMailto } from '../../site.config';
+import { t, type Lang } from '../../i18n';
+
+interface Props {
+  lang: Lang;
+}
+
+const ui = t(Astro.props.lang);
+const hero = ui.home.hero;
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__inner">
+    <div class="hero__main">
+      <p class="eyebrow">{hero.eyebrow}</p>
+      <h1 id="hero-title" class="hero__title">{hero.title}</h1>
+      <p class="hero__text">{hero.text}</p>
+      <div class="hero__actions">
+        <Button href={lunchMailto(ui.cta.lunchSubject, ui.cta.lunchBody)}>{ui.cta.lunch}</Button>
+        <Button href={site.phoneHref} variant="secondary">{ui.cta.call}</Button>
+      </div>
+    </div>
+    <ul class="hero__proof">
+      {hero.proof.map((item) => <li>{item}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: var(--s-6) var(--s-7);
+  }
+
+  .hero__inner {
+    display: grid;
+    gap: var(--s-5);
+  }
+
+  .hero__main {
+    display: grid;
+    gap: var(--s-4);
+  }
+
+  .hero__title {
+    font-size: var(--fs-3xl);
+    hyphens: manual;
+  }
+
+  .hero__text {
+    max-width: var(--measure);
+    font-size: var(--fs-m);
+    color: var(--c-ink-muted);
+  }
+
+  /* On phones the fixed call bar carries these two actions, so the hero keeps room for the message */
+  .hero__actions {
+    display: none;
+  }
+
+  @media (min-width: 48rem) {
+    .hero__actions {
+      display: flex;
+    }
+  }
+
+  .hero__actions {
+    flex-wrap: wrap;
+    gap: var(--s-3);
+    margin-top: var(--s-2);
+  }
+
+  .hero__proof {
+    display: grid;
+    gap: var(--s-2);
+    margin: 0;
+    padding: var(--s-4) 0 0;
+    border-top: var(--border);
+    list-style: none;
+    font-size: var(--fs-s);
+    font-weight: var(--w-bold);
+    color: var(--c-ink);
+  }
+
+  .hero__proof li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-3);
+  }
+
+  .hero__proof li::before {
+    content: '';
+    width: 0.6em;
+    height: 0.5em;
+    background: var(--c-gold);
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+
+  @media (min-width: 48rem) {
+    .hero {
+      padding-block: var(--s-8);
+    }
+    .hero__main {
+      gap: var(--s-5);
+    }
+    .hero__text {
+      font-size: var(--fs-l);
+      line-height: 1.5;
+    }
+  }
+
+  /* Wide: proof points become a quiet fact column next to the message */
+  @media (min-width: 68rem) {
+    .hero__inner {
+      grid-template-columns: minmax(0, 8fr) minmax(0, 3fr);
+      align-items: end;
+      gap: var(--s-8);
+    }
+    .hero__proof {
+      display: grid;
+      gap: 0;
+      padding: 0;
+      border-top: 0;
+      border-left: var(--rule-gold);
+    }
+    .hero__proof li {
+      padding: var(--s-3) 0 var(--s-3) var(--s-5);
+    }
+    .hero__proof li + li {
+      border-top: var(--border);
+    }
+    .hero__proof li::before {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,45 @@
+---
+// Block: a pull quote. English quotes are not translated.
+interface Props {
+  bron?: string;
+}
+const { bron } = Astro.props;
+---
+
+<figure class="blk-citaat">
+  <blockquote><slot /></blockquote>
+  {bron && <figcaption>— {bron}</figcaption>}
+</figure>
+
+<style>
+  .blk-citaat {
+    display: grid;
+    gap: var(--s-3);
+    padding: var(--s-6) var(--s-5) var(--s-5);
+    background: var(--c-navy);
+    color: var(--c-on-navy);
+  }
+  .blk-citaat blockquote {
+    position: relative;
+    margin: 0;
+    padding-top: var(--s-5);
+    font-size: var(--fs-xl);
+    font-weight: var(--w-bold);
+    line-height: var(--lh-snug);
+  }
+  .blk-citaat blockquote::before {
+    content: '“';
+    position: absolute;
+    top: -0.45em;
+    left: -0.05em;
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--c-gold);
+  }
+  .blk-citaat blockquote :global(p) {
+    margin: 0;
+  }
+  .blk-citaat figcaption {
+    color: var(--c-on-navy-muted);
+  }
+</style>

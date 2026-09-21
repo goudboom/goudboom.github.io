@@ -1,0 +1,45 @@
+---
+// Block: a grid of images. beelden = [{ src, alt }]
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  beelden: { src: ImageMetadata; alt: string }[];
+}
+
+const { beelden } = Astro.props;
+---
+
+<ul class="blk-galerij">
+  {
+    beelden.map((beeld) => (
+      <li>
+        <Picture
+          src={beeld.src}
+          alt={beeld.alt}
+          formats={['avif', 'webp']}
+          fallbackFormat="jpg"
+          widths={[320, 540, 800]}
+          width={800}
+          sizes="(min-width: 48rem) 22rem, calc(50vw - 1.5rem)"
+          loading="lazy"
+        />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .blk-galerij {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--s-3);
+    list-style: none;
+    padding: 0;
+  }
+  .blk-galerij :global(img) {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+  }
+</style>

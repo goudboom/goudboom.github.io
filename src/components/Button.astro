@@ -1,0 +1,80 @@
+---
+// Link styled as a button. Primary = gold with navy text; secondary = navy outline.
+// `onNavy` switches the secondary variant for dark sections.
+interface Props {
+  href: string;
+  variant?: 'primary' | 'secondary';
+  onNavy?: boolean;
+  block?: boolean;
+  class?: string;
+  [key: string]: unknown;
+}
+
+const { href, variant = 'primary', onNavy = false, block = false, class: className, ...rest } = Astro.props;
+---
+
+<a
+  href={href}
+  class:list={['btn', `btn--${variant}`, { 'btn--on-navy': onNavy, 'btn--block': block }, className]}
+  {...rest}
+>
+  <slot />
+</a>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--s-2);
+    min-height: 3rem;
+    padding: var(--s-3) var(--s-5);
+    border: 2px solid transparent;
+    border-radius: var(--radius);
+    font-size: var(--fs-s);
+    font-weight: var(--w-bold);
+    line-height: 1.2;
+    text-align: center;
+    text-decoration: none;
+    transition:
+      background-color var(--dur) var(--ease),
+      border-color var(--dur) var(--ease),
+      color var(--dur) var(--ease);
+  }
+
+  .btn--primary {
+    background: var(--c-gold);
+    border-color: var(--c-gold);
+    color: var(--c-navy);
+  }
+
+  .btn--primary:hover {
+    background: var(--c-gold-hover);
+    border-color: var(--c-gold-hover);
+  }
+
+  .btn--secondary {
+    background: transparent;
+    border-color: var(--c-navy);
+    color: var(--c-navy);
+  }
+
+  .btn--secondary:hover {
+    background: var(--c-navy);
+    color: var(--c-white);
+  }
+
+  .btn--secondary.btn--on-navy {
+    border-color: var(--c-on-navy);
+    color: var(--c-on-navy);
+  }
+
+  .btn--secondary.btn--on-navy:hover {
+    background: var(--c-white);
+    color: var(--c-navy);
+  }
+
+  .btn--block {
+    width: 100%;
+  }
+</style>

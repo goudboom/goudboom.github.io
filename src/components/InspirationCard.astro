@@ -1,0 +1,176 @@
+---
+// One Inspiratiebank card. Each form (vorm) has its own visual style.
+import { render, type CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
+import { categories, forms } from '../content/taxonomy';
+import { itemDescription } from '../lib/inspiration';
+
+interface Props {
+  item: CollectionEntry<'inspiratie'>;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { item, headingLevel = 'h3' } = Astro.props;
+// Plain Markdown items show in full; rich MDX mini-pages show a short summary on the card.
+const isRich = item.filePath?.endsWith('.mdx') ?? false;
+const { Content } = await render(item);
+const { titel, categorie, vorm, bron, afbeelding, afbeeldingAlt } = item.data;
+const Heading = headingLevel;
+const url = `/inspiratiebank/${item.id}/`;
+---
+
+<article class:list={['ins-card', `ins-card--${vorm}`]} data-vorm={vorm} data-categorie={categorie}>
+  <p class="ins-card__meta">
+    <span>{forms[vorm]}</span>
+    <span aria-hidden="true">·</span>
+    <span>{categories[categorie]}</span>
+  </p>
+  {
+    afbeelding && (
+      <Image class="ins-card__image" src={afbeelding} alt={afbeeldingAlt ?? ''} width={640} loading="lazy" />
+    )
+  }
+  <Heading class="ins-card__title"><a href={url}>{titel}</a></Heading>
+  <div class="ins-card__body">
+    {isRich ? <p>{itemDescription(item)}</p> : vorm === 'quote' ? <blockquote><Content /></blockquote> : <Content />}
+  </div>
+  {bron && <p class="ins-card__source">— {bron}</p>}
+</article>
+
+<style>
+  .ins-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+    height: 100%;
+    padding: var(--s-5);
+    background: var(--c-white);
+    border: var(--border);
+    transition: border-color var(--dur) var(--ease);
+  }
+
+  .ins-card:hover {
+    border-color: var(--c-navy);
+  }
+
+  .ins-card:focus-within {
+    outline: 3px solid var(--c-focus);
+    outline-offset: 3px;
+  }
+
+  .ins-card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--s-2);
+    font-size: var(--fs-xs);
+    font-weight: var(--w-bold);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--c-ink-muted);
+  }
+
+  .ins-card :global(.ins-card__image) {
+    order: -1;
+    width: calc(100% + 2 * var(--s-5));
+    max-width: none;
+    margin: calc(-1 * var(--s-5)) calc(-1 * var(--s-5)) 0;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .ins-card__title {
+    font-size: var(--fs-l);
+    line-height: var(--lh-snug);
+  }
+
+  .ins-card__title a {
+    text-decoration: none;
+  }
+
+  .ins-card__title a:focus-visible {
+    outline: none;
+  }
+
+  /* Whole card clickable */
+  .ins-card__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .ins-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--s-3);
+  }
+
+  .ins-card__body :global(ol) {
+    margin: 0;
+    padding-left: 1.25rem;
+  }
+
+  .ins-card__body :global(ol li::marker) {
+    font-weight: var(--w-bold);
+  }
+
+  .ins-card__source {
+    margin-top: auto;
+    font-size: var(--fs-s);
+    color: var(--c-ink-muted);
+  }
+
+  /* ---------- Per form ---------- */
+
+  /* Gedachte: quiet, gold rule on the left */
+  .ins-card--gedachte {
+    border-left: var(--rule-gold);
+  }
+
+  /* Vraag: navy card, the question is the hero */
+  .ins-card--vraag {
+    background: var(--c-navy);
+    border-color: var(--c-navy);
+    color: var(--c-on-navy);
+  }
+  .ins-card--vraag .ins-card__meta {
+    color: var(--c-on-navy-muted);
+  }
+  .ins-card--vraag .ins-card__body {
+    font-size: var(--fs-l);
+    font-weight: var(--w-bold);
+    line-height: var(--lh-snug);
+  }
+  .ins-card--vraag:focus-within {
+    outline-color: var(--c-gold);
+  }
+
+  /* Quote: large gold quotation mark, text set larger */
+  .ins-card--quote blockquote {
+    position: relative;
+    padding-top: var(--s-6);
+    font-size: var(--fs-l);
+    line-height: 1.45;
+  }
+  .ins-card--quote blockquote::before {
+    content: '“';
+    position: absolute;
+    top: -0.35em;
+    left: -0.05em;
+    font-size: 4rem;
+    font-weight: var(--w-bold);
+    line-height: 1;
+    color: var(--c-gold);
+  }
+
+  /* Model: surface with numbered steps */
+  .ins-card--model {
+    background: var(--c-surface);
+  }
+
+  /* Tip: soft gold surface */
+  .ins-card--tip {
+    background: var(--c-gold-soft);
+    border-color: var(--c-gold);
+  }
+</style>
