@@ -34,7 +34,7 @@ const jsonLd = [
 <BaseLayout title={page.seo.title} description={page.seo.description} routeKey="inspiration" jsonLd={jsonLd}>
   <section class="section ins-page">
     <div class="container">
-      <InspirationHero title={page.title} intro={page.intro} crumbs={crumbs} tagline={page.tagline} />
+      <InspirationHero title={page.title} intro={page.intro} crumbs={crumbs} />
       <InspirationGrid items={items} usedCategories={usedCategories(items)} />
     </div>
   </section>

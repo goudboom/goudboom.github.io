@@ -62,7 +62,6 @@ export const nl = {
     title: 'Inspiratiebank',
     intro:
       'Een verzameling ideeën, vragen, denkkaders en observaties om anders naar werk, teams en verandering te kijken.',
-    tagline: ['Actueel', 'Kwalitatief', 'Toepasbaar'],
     filters: {
       category: 'Categorie',
       form: 'Vorm',
