@@ -3,12 +3,13 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import mdx from '@astrojs/mdx';
 import oldUrls from './integrations/old-urls.ts';
+import missingExplanations from './integrations/missing-explanations.ts';
 
 export default defineConfig({
   site: 'https://goudboom.nl',
   trailingSlash: 'always',
   build: { format: 'directory' },
-  integrations: [mdx(), sitemap(), oldUrls()],
+  integrations: [mdx(), sitemap(), oldUrls(), missingExplanations()],
   devToolbar: { enabled: false },
   vite: {
     build: {

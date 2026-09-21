@@ -18,6 +18,11 @@ const inspiratie = defineCollection({
       datum: z.coerce.date(),
       gewijzigd: z.coerce.date().optional(),
       omschrijving: z.string().max(155).optional(),
+      // Yuri's own explanation (plain text, paragraphs separated by a blank line). Shown on the item page,
+      // not on the card. This is what makes an item findable.
+      toelichting: z.string().optional(),
+      // Related service: the item page shows its card and the service page lists the item.
+      dienst: z.enum(['projectmanagement', 'it-iv-consultancy', 'agile-coaching']).optional(),
     }),
 });
 

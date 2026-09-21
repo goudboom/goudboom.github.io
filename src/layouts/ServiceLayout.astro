@@ -1,11 +1,15 @@
 ---
 // Shared structure of every service page:
-// positioning → Voor wie → Waar ik bij kan helpen → (model) → Uit de praktijk → Relevant → closing CTA.
+// positioning → Voor wie → Waar ik bij kan helpen → (model) → Uit de praktijk → Relevant
+// → the two other services → closing CTA.
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumbs from '../components/Breadcrumbs.astro';
 import CaseStudy from '../components/CaseStudy.astro';
 import NineGrid from '../components/NineGrid.astro';
 import ClosingCta from '../components/ClosingCta.astro';
+import ServiceCards from '../components/ServiceCards.astro';
+import InspirationCard from '../components/InspirationCard.astro';
+import { getItems, itemsForService } from '../lib/inspiration';
 import { site } from '../site.config';
 import { t, href, type Lang } from '../i18n';
 import { organizationNode, personNode, serviceNode, breadcrumbNode } from '../lib/schema';
@@ -22,6 +26,8 @@ const ui = t(lang);
 const page = ui.servicePages[service];
 const labels = ui.serviceLabels;
 const model = 'model' in page ? page.model : null;
+// Inspiration items linked to this service (frontmatter `dienst`), newest first, max. 3.
+const related = itemsForService(await getItems(), service).slice(0, 3);
 
 const url = new URL(href(service, lang), site.url).href;
 const crumbs = [
@@ -94,6 +100,30 @@ const jsonLd = [
     </div>
   </section>
 
+  {
+    related.length > 0 && (
+      <section class:list={['section', { 'section--surface': !!model }]} aria-labelledby="related-inspiration-title">
+        <div class="container other-services">
+          <h2 id="related-inspiration-title">{labels.inspiration}</h2>
+          <ul class="related-inspiration">
+            {related.map((item) => (
+              <li>
+                <InspirationCard item={item} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class:list={['section', { 'section--surface': related.length > 0 ? !model : !!model }]} aria-labelledby="other-services-title">
+    <div class="container other-services">
+      <h2 id="other-services-title">{ui.home.services.title}</h2>
+      <ServiceCards lang={lang} exclude={service} />
+    </div>
+  </section>
+
   <ClosingCta lang={lang} title={page.closing} />
 </BaseLayout>
 
@@ -160,6 +190,26 @@ const jsonLd = [
   .practice__cases {
     display: grid;
     gap: var(--s-5);
+  }
+
+  .other-services {
+    display: grid;
+    gap: var(--s-6);
+  }
+
+  .related-inspiration {
+    display: grid;
+    gap: var(--s-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 56rem) {
+    .related-inspiration {
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--s-5);
+    }
   }
 
   .relevant {

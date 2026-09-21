@@ -4,7 +4,7 @@ import { site } from '../site.config';
 import { nl } from '../i18n/nl';
 import { href } from '../i18n';
 import { categories, forms } from '../content/taxonomy';
-import { getItems, plainText } from './inspiration';
+import { getItems, plainText, paragraphs } from './inspiration';
 
 const abs = (path: string) => new URL(path, site.url).href;
 const clean = (text: string) => text.replace(/\u00AD/g, '');
@@ -142,6 +142,7 @@ export async function buildLlmsFull(): Promise<string> {
       plainText(item.body),
     );
     if (item.data.bron) p(`— ${item.data.bron}`);
+    if (item.data.toelichting) p(...paragraphs(item.data.toelichting));
   }
 
   // Privacy

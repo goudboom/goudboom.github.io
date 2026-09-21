@@ -1,8 +1,7 @@
 ---
-// Three random Inspiratiebank items, picked at build time (a new pick on every deploy).
-import { getCollection } from 'astro:content';
-import Button from '../Button.astro';
-import InspirationCard from '../InspirationCard.astro';
+// Home: an invitation to the Inspiratiebank without cards — one playful action.
+// The random button opens a random item page; without JS it goes to the overview.
+import Arrow from '../Arrow.astro';
 import RandomInspirationButton from '../RandomInspirationButton.astro';
 import { t, href, type Lang } from '../../i18n';
 
@@ -13,9 +12,6 @@ interface Props {
 const { lang } = Astro.props;
 const ui = t(lang);
 const section = ui.home.inspiration;
-
-const all = await getCollection('inspiratie');
-const picks = [...all].sort(() => Math.random() - 0.5).slice(0, 3);
 ---
 
 <section class="section section--surface" aria-labelledby="inspiration-title">
@@ -23,53 +19,58 @@ const picks = [...all].sort(() => Math.random() - 0.5).slice(0, 3);
     <div class="teaser__intro">
       <h2 id="inspiration-title">{section.title}</h2>
       <p class="lead">{section.text}</p>
-      <div class="teaser__actions">
-        <RandomInspirationButton label={ui.inspiration.randomButton} />
-        <Button href={href('inspiration', 'nl')} variant="secondary">{ui.inspiration.toOverview}</Button>
-      </div>
     </div>
-    <ul class="teaser__grid">
-      {
-        picks.map((item) => (
-          <li>
-            <InspirationCard item={item} />
-          </li>
-        ))
-      }
-    </ul>
+    <div class="teaser__action">
+      <RandomInspirationButton label={ui.inspiration.randomButton} />
+      <p class="teaser__micro">{ui.inspiration.randomMicrocopy}</p>
+      <a class="teaser__link" href={href('inspiration', 'nl')}>
+        {ui.inspiration.toOverview}
+        <Arrow />
+      </a>
+    </div>
   </div>
 </section>
 
 <style>
   .teaser {
     display: grid;
-    gap: var(--s-7);
+    gap: var(--s-6);
   }
 
   .teaser__intro {
     display: grid;
     gap: var(--s-4);
-    max-width: 44rem;
+    max-width: 40rem;
   }
 
-  .teaser__actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--s-3);
-    margin-top: var(--s-2);
-  }
-
-  .teaser__grid {
+  .teaser__action {
     display: grid;
-    gap: var(--s-4);
-    list-style: none;
-    padding: 0;
+    justify-items: start;
+    align-content: center;
+    gap: var(--s-3);
+    padding-left: var(--s-5);
+    border-left: var(--rule-gold);
+  }
+
+  .teaser__micro {
+    font-size: var(--fs-s);
+    color: var(--c-ink-muted);
+  }
+
+  .teaser__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    min-height: 2.75rem;
+    margin-top: var(--s-2);
+    font-weight: var(--w-bold);
   }
 
   @media (min-width: 56rem) {
-    .teaser__grid {
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--s-5);
+    .teaser {
+      grid-template-columns: 3fr 2fr;
+      align-items: center;
+      gap: var(--s-8);
     }
   }
 </style>

@@ -43,10 +43,10 @@ export function plainText(body: string | undefined): string {
     .trim();
 }
 
-/** Description for meta tags: frontmatter `omschrijving`, else the first ~155 characters of the text. */
+/** Description for meta tags: `omschrijving`, else the start of the toelichting, else the start of the text. */
 export function itemDescription(item: Item): string {
   if (item.data.omschrijving) return item.data.omschrijving;
-  const text = plainText(item.body).replace(/\s+/g, ' ');
+  const text = (item.data.toelichting ?? plainText(item.body)).replace(/\s+/g, ' ').trim();
   if (text.length <= 155) return text;
   const cut = text.slice(0, 152);
   return `${cut.slice(0, cut.lastIndexOf(' '))}…`;
@@ -54,4 +54,26 @@ export function itemDescription(item: Item): string {
 
 export function fill(template: string, values: Record<string, string>): string {
   return template.replace(/\{(\w+)\}/g, (_, key: string) => values[key] ?? `{${key}}`);
+}
+
+/** The toelichting as paragraphs (split on blank lines). */
+export function paragraphs(text: string | undefined): string[] {
+  return (text ?? '')
+    .split(/\n\s*\n/)
+    .map((p) => p.replace(/\s+/g, ' ').trim())
+    .filter(Boolean);
+}
+
+export type ServiceKey = 'projectManagement' | 'itConsultancy' | 'agileCoaching';
+export type DienstSlug = 'projectmanagement' | 'it-iv-consultancy' | 'agile-coaching';
+
+/** Frontmatter `dienst` slug ↔ service key used in i18n and routes. */
+export const dienstToService: Record<DienstSlug, ServiceKey> = {
+  projectmanagement: 'projectManagement',
+  'it-iv-consultancy': 'itConsultancy',
+  'agile-coaching': 'agileCoaching',
+};
+
+export function itemsForService(items: Item[], service: ServiceKey): Item[] {
+  return items.filter((item) => item.data.dienst && dienstToService[item.data.dienst] === service);
 }

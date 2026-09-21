@@ -1,24 +1,31 @@
 ---
-// The three service cards. Used on Home and on the Diensten overview.
+// The service cards. Used on Home, on the Diensten overview and (minus the current one) on each service page.
 import Arrow from './Arrow.astro';
 import { t, href, type Lang } from '../i18n';
+
+type ServiceKey = 'projectManagement' | 'itConsultancy' | 'agileCoaching';
 
 interface Props {
   lang: Lang;
   headingLevel?: 'h2' | 'h3';
+  /** Leave out this service (the page you are on). */
+  exclude?: ServiceKey;
+  /** Show only this service (used on inspiration items). */
+  only?: ServiceKey;
 }
 
-const { lang, headingLevel = 'h3' } = Astro.props;
+const { lang, headingLevel = 'h3', exclude, only } = Astro.props;
 const ui = t(lang);
 const Heading = headingLevel;
 
-const cards = (['projectManagement', 'itConsultancy', 'agileCoaching'] as const).map((key) => ({
+const keys: ServiceKey[] = ['projectManagement', 'itConsultancy', 'agileCoaching'];
+const cards = keys.filter((key) => key !== exclude && (!only || key === only)).map((key) => ({
   ...ui.services.items[key],
   url: href(key, lang),
 }));
 ---
 
-<ul class="service-cards">
+<ul class:list={['service-cards', { 'service-cards--two': cards.length === 2, 'service-cards--one': cards.length === 1 }]}>
   {
     cards.map((card) => (
       <li class="service-card">
@@ -112,6 +119,12 @@ const cards = (['projectManagement', 'itConsultancy', 'agileCoaching'] as const)
     .service-cards {
       grid-template-columns: repeat(3, 1fr);
       gap: var(--s-5);
+    }
+    .service-cards--two {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .service-cards--one {
+      grid-template-columns: minmax(0, 28rem);
     }
   }
 </style>

@@ -6,9 +6,9 @@ import InspirationHero from '../../components/inspiration/InspirationHero.astro'
 import InspirationGrid from '../../components/InspirationGrid.astro';
 import InspirationItem from '../../components/inspiration/InspirationItem.astro';
 import { site } from '../../site.config';
-import { t } from '../../i18n';
+import { t, href } from '../../i18n';
 import { categories, type Category } from '../../content/taxonomy';
-import { getItems, usedCategories, itemDescription, fill, type Item } from '../../lib/inspiration';
+import { getItems, usedCategories, itemDescription, fill, dienstToService, type Item } from '../../lib/inspiration';
 import { organizationNode, personNode, breadcrumbNode, ids } from '../../lib/schema';
 
 type PageProps =
@@ -102,6 +102,10 @@ if (props.kind === 'category') {
       publisher: { '@id': ids.organization },
       mainEntityOfPage: url,
       isPartOf: { '@id': `${site.url}/inspiratiebank/#page` },
+      ...(item.data.toelichting ? { articleBody: item.data.toelichting.replace(/\s+/g, ' ').trim() } : {}),
+      ...(item.data.dienst
+        ? { about: { '@id': `${new URL(href(dienstToService[item.data.dienst], 'nl'), site.url).href}#service` } }
+        : {}),
       ...(item.data.bron && item.data.vorm === 'quote'
         ? { creator: { '@type': 'Person', name: item.data.bron }, author: undefined }
         : {}),

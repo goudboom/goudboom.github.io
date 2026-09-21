@@ -5,11 +5,12 @@ import Breadcrumbs from '../Breadcrumbs.astro';
 import Arrow from '../Arrow.astro';
 import InspirationCard from '../InspirationCard.astro';
 import RandomInspirationButton from '../RandomInspirationButton.astro';
+import ServiceCards from '../ServiceCards.astro';
 import { blocks } from '../blocks';
 import { site } from '../../site.config';
 import { t } from '../../i18n';
 import { categories, forms } from '../../content/taxonomy';
-import { fill, type Item } from '../../lib/inspiration';
+import { fill, paragraphs, dienstToService, type Item } from '../../lib/inspiration';
 
 interface Props {
   item: Item;
@@ -23,7 +24,9 @@ const { item, prev, next, related, crumbs } = Astro.props;
 const ui = t('nl');
 const labels = ui.inspiration.item;
 const { Content } = await render(item);
-const { titel, categorie, vorm, bron } = item.data;
+const { titel, categorie, vorm, bron, toelichting, dienst } = item.data;
+const explanation = paragraphs(toelichting);
+const service = dienst ? dienstToService[dienst] : undefined;
 const url = `${site.url}/inspiratiebank/${item.id}/`;
 const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
 ---
@@ -53,6 +56,25 @@ const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeUR
       }
       {bron && <p class="item__source">— {bron}</p>}
     </div>
+
+    <section
+      class:list={['item__explanation', { 'item__explanation--placeholder': explanation.length === 0 }]}
+      aria-labelledby="explanation-title"
+      data-nosnippet={explanation.length === 0 ? '' : undefined}
+    >
+      <h2 id="explanation-title" class="item__explanation-title">
+        {labels.explanation}
+      </h2>
+      {(explanation.length > 0 ? explanation : labels.explanationPlaceholder).map((paragraph) => <p>{paragraph}</p>)}
+    </section>
+
+    {
+      service && (
+        <aside class="item__service" aria-label={ui.services.items[service].title}>
+          <ServiceCards lang="nl" only={service} />
+        </aside>
+      )
+    }
 
     <div class="item__actions">
       <a class="item__share" href={shareUrl} target="_blank" rel="noopener">
@@ -112,6 +134,8 @@ const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeUR
 
   .item__head,
   .item__body,
+  .item__explanation,
+  .item__service,
   .item__actions,
   .item__nav,
   .item__back {
@@ -195,6 +219,26 @@ const shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeUR
 
   .item__quote :global(p) {
     margin: 0;
+  }
+
+  .item__explanation {
+    display: grid;
+    gap: var(--s-4);
+    padding-top: var(--s-6);
+    border-top: var(--border);
+    font-size: var(--fs-m);
+    line-height: var(--lh-body);
+  }
+
+  .item__explanation-title {
+    font-size: var(--fs-xl);
+  }
+
+  /* Until Yuri writes the real toelichting: clearly a placeholder */
+  .item__explanation--placeholder {
+    padding: var(--s-5);
+    border: 2px dashed var(--c-line);
+    color: var(--c-ink-muted);
   }
 
   .item__source {

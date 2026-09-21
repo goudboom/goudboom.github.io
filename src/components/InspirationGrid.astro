@@ -230,6 +230,13 @@ const usedForms = formSlugs.filter((form) => items.some((item) => item.data.vorm
     display: none;
   }
 
+  /* The highlight shows the whole text, not the clamped card version */
+  .ins-random__slot :global(.ins-card__body) {
+    display: block;
+    -webkit-line-clamp: unset;
+    line-clamp: none;
+  }
+
   .ins-random__actions {
     display: flex;
     flex-wrap: wrap;

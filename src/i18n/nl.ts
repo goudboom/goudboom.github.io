@@ -90,6 +90,13 @@ export const nl = {
       back: 'Terug naar de Inspiratiebank',
       related: 'Meer in {categorie}',
       askYourself: 'Vraag voor jezelf',
+      explanation: 'Waarom dit ertoe doet',
+      // Placeholder shown (on purpose, at Yuri's request) until an item has its own toelichting.
+      // Never used in meta description, JSON-LD or llms-full.txt.
+      explanationPlaceholder: [
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+        'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Curabitur pretium tincidunt lacus, nulla gravida orci a odio.',
+      ],
     },
   },
   home: {
@@ -252,6 +259,7 @@ export const nl = {
     approach: 'Mijn aanpak',
     result: 'Het resultaat',
     relevant: 'Relevant:',
+    inspiration: 'Inspiratie over dit onderwerp',
   },
 
   servicePages: {
@@ -523,6 +531,9 @@ export const nl = {
           {
             field: 'Agile',
             items: [
+              'Professional Scrum Product Owner II (2026)',
+              'Professional Agile Leadership – Evidence-Based Management (PAL-EBM) (2026)',
+              'Professional Scrum Master II (2026)',
               'SAFe® Agilist (2026)',
               'Agile Scrum Product Owner (2022)',
               'DevOps Foundation (2020)',
