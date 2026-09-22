@@ -119,7 +119,7 @@ Use `.md` for plain text; `.mdx` only when building blocks are needed. `_voorbee
 | `afbeelding` + `afbeeldingAlt` | no | relative path to `src/assets/inspiratie/<slug>/…`, plus real alt text |
 | `omschrijving` | no | ≤ 155 characters; otherwise the start of the text is used |
 | `gewijzigd` | no | date of the last real content change (feeds `dateModified`) |
-| `toelichting` | no, but **the key to findability** | Yuri's own explanation, ~8–9 sentences, plain text; blank line = new paragraph (YAML `\|` block). Shown on the item page under "Waarom dit ertoe doet", not on the card; also used for the meta description, JSON-LD `articleBody` and llms-full.txt |
+| `toelichting` | no, but **the key to findability** | Yuri's own explanation, ~8–9 sentences, plain text; blank line = new paragraph (YAML `\|` block). Shown on the item page under "Waarom ik dit deel", not on the card; also used for the meta description, JSON-LD `articleBody` and llms-full.txt |
 | `dienst` | no | `projectmanagement` · `it-iv-consultancy` · `agile-coaching`. The item page shows that service's card; the service page lists the item under "Inspiratie over dit onderwerp" (internal links both ways) |
 
 Categories and forms live in one place: `src/content/taxonomy.ts` (labels shown on the site).

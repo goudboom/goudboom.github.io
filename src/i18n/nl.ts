@@ -89,7 +89,7 @@ export const nl = {
       back: 'Terug naar de Inspiratiebank',
       related: 'Meer in {categorie}',
       askYourself: 'Vraag voor jezelf',
-      explanation: 'Waarom dit ertoe doet',
+      explanation: 'Waarom ik dit deel',
       // Placeholder shown (on purpose, at Yuri's request) until an item has its own toelichting.
       // Never used in meta description, JSON-LD or llms-full.txt.
       explanationPlaceholder: [
