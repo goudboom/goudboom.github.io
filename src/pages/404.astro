@@ -1,5 +1,6 @@
 ---
-// GitHub Pages serves this one file for every missing URL (Dutch and English; English follows in phase 6).
+// GitHub Pages serves this one file for every missing URL. It is Dutch by default; a small script
+// swaps the texts to English when the URL starts with /en/.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
 import RandomInspirationButton from '../components/RandomInspirationButton.astro';
@@ -9,27 +10,52 @@ import { oldUrls } from '../redirects';
 const lang = 'nl';
 const ui = t(lang);
 const page = ui.notFound;
+const enPage = t('en').notFound;
+const enTexts = {
+  title: enPage.title,
+  text: enPage.text,
+  home: enPage.home,
+  homeUrl: href('home', 'en'),
+  random: t('en').inspiration.randomButton,
+  seoTitle: enPage.seoTitle,
+};
 ---
 
 <BaseLayout title={page.seoTitle} description={page.text} lang={lang} noindex>
   <section class="section not-found">
     <div class="container not-found__inner">
       <p class="not-found__code" aria-hidden="true">404</p>
-      <h1>{page.title}</h1>
-      <p class="lead">{page.text}</p>
+      <h1 data-nf="title">{page.title}</h1>
+      <p class="lead" data-nf="text">{page.text}</p>
       <div class="not-found__actions">
-        <Button href={href('home', lang)}>{page.home}</Button>
-        <RandomInspirationButton label={ui.inspiration.randomButton} variant="secondary" />
+        <Button href={href('home', lang)} data-nf="home">{page.home}</Button>
+        <RandomInspirationButton label={ui.inspiration.randomButton} variant="secondary" data-nf="random" />
       </div>
     </div>
   </section>
 </BaseLayout>
 
-<script is:inline define:vars={{ oldUrls }}>
+<script is:inline define:vars={{ oldUrls, enTexts }}>
   // Safety net for old URLs of the previous site (the static redirect pages normally catch them first).
   const path = location.pathname.endsWith('/') ? location.pathname : `${location.pathname}/`;
   const match = Object.entries(oldUrls).find(([from]) => from.toLowerCase() === path.toLowerCase());
   if (match) location.replace(match[1]);
+
+  // English visitors get the English version of this page.
+  if (location.pathname.startsWith('/en/')) {
+    document.documentElement.lang = 'en';
+    document.title = enTexts.seoTitle;
+    const set = (name, value) => {
+      const el = document.querySelector(`[data-nf="${name}"]`);
+      if (el) el.textContent = value;
+    };
+    set('title', enTexts.title);
+    set('text', enTexts.text);
+    set('home', enTexts.home);
+    set('random', enTexts.random);
+    const home = document.querySelector('[data-nf="home"]');
+    if (home) home.setAttribute('href', enTexts.homeUrl);
+  }
 </script>
 
 <style>

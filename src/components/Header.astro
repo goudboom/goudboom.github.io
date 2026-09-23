@@ -20,9 +20,16 @@ const items: { key: RouteKey; label: string }[] = [
   { key: 'contact', label: ui.nav.contact },
 ];
 
+// The Inspiratiebank is Dutch only, so the English menu links to the Dutch overview.
+function navHref(key: RouteKey): string {
+  return key === 'inspiration' && lang === 'en' ? routes.inspiration.nl : href(key, lang);
+}
+const navLang = (key: RouteKey): 'nl' | undefined =>
+  key === 'inspiration' && lang === 'en' ? 'nl' : undefined;
+
 // A nav item is current for its own page and everything below it (home only for itself).
 function isCurrent(key: RouteKey): boolean {
-  const target = href(key, lang);
+  const target = key === 'inspiration' ? routes.inspiration.nl : href(key, lang);
   return key === 'home' ? path === target : path.startsWith(target);
 }
 
@@ -56,8 +63,10 @@ const lunch = lunchMailto(ui.cta.lunchSubject, ui.cta.lunchBody);
           items.map((item) => (
             <li>
               <a
-                href={href(item.key, lang)}
+                href={navHref(item.key)}
                 class="site-nav__link"
+                hreflang={navLang(item.key)}
+                lang={navLang(item.key)}
                 aria-current={isCurrent(item.key) ? 'page' : undefined}
               >
                 {item.label}

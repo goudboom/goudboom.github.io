@@ -4,11 +4,8 @@ import { en } from './en';
 export type Lang = 'nl' | 'en';
 export const langs: Lang[] = ['nl', 'en'];
 
-/**
- * Languages that are live. English is postponed: until it is added here, the language switch
- * and the English hreflang links stay hidden.
- */
-export const liveLangs: Lang[] = ['nl'];
+/** Languages that are live: the language switch and hreflang links only cover these. */
+export const liveLangs: Lang[] = ['nl', 'en'];
 
 function merge<T>(base: T, override: unknown): T {
   if (!override || typeof override !== 'object') return base;
@@ -37,6 +34,8 @@ export const routes = {
   projectManagement: { nl: '/diensten/projectmanagement/', en: '/en/services/project-management/' },
   itConsultancy: { nl: '/diensten/it-iv-consultancy/', en: '/en/services/it-consultancy/' },
   agileCoaching: { nl: '/diensten/agile-coaching/', en: '/en/services/agile-coaching/' },
+  // The Inspiratiebank is Dutch only: no English URL, so no English hreflang. The English menu
+  // links to the Dutch overview (see Header.astro).
   inspiration: { nl: '/inspiratiebank/', en: null },
   contact: { nl: '/contact/', en: '/en/contact/' },
   privacy: { nl: '/privacy/', en: null },

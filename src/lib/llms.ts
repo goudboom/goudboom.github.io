@@ -46,6 +46,7 @@ export function buildLlms(): string {
     `- [${nl.nav.services}](${abs(href('services', 'nl'))})`,
     `- [${nl.nav.contact}](${abs(href('contact', 'nl'))})`,
     `- [${nl.nav.inspiration}](${abs(href('inspiration', 'nl'))}): ${nl.inspiration.intro}`,
+    `- [English version](${abs('/en/')})`,
     `- [Volledige inhoud als platte tekst](${abs('/llms-full.txt')})`,
     '',
   ];

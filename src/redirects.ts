@@ -11,4 +11,8 @@ export const oldUrls: Record<string, string> = {
   '/Beheer/': '/diensten/it-iv-consultancy/',
   '/Agile-Lean/': '/diensten/agile-coaching/',
   '/Templates/': '/inspiratiebank/',
+  // Renamed or removed inspiration items (their URLs were live, so they keep working).
+  '/inspiratiebank/zelf-aan-de-slag/': '/inspiratiebank/juiste-startpunt/',
+  '/inspiratiebank/zo-wijs-als-nu/': '/inspiratiebank/acteer/',
+  '/inspiratiebank/verbeelding/': '/inspiratiebank/',
 };

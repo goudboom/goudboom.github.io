@@ -438,7 +438,7 @@ export const nl = {
       items: [
         'Je hebt een complexe uitdaging: een project dat vastloopt, uitval of een escalatie.',
         'Er is veel werkdruk. Iedereen voelt dat het beter kan, maar niemand weet precies hoe.',
-        'Je wilt sparren over een regieorganisatie, beheer dat weer in rustig vaarwater moet komen, of een team dat robuuster en zelfstandiger moet worden.',
+        'Je wilt sparren over een regieorganisatie, beheer dat weer in rustig vaarwater moet komen, kosten die de pan uit rijzen, of een team dat robuuster en zelfstandiger moet worden.',
         'Je hebt zin om op mijn kosten te lunchen en eens te kijken of we iets voor elkaar kunnen betekenen.',
       ],
     },
