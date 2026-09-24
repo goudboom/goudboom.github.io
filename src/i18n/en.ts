@@ -29,6 +29,7 @@ export const en: DeepPartial<Dict> = {
     lunch: 'Schedule an introductory lunch',
     lunchShort: 'Plan a lunch',
     call: 'Call now',
+    caseStudy: 'Read a case study',
     lunchSubject: 'Introductory lunch',
     lunchBody: 'Hi Yuri, I would like to have lunch some time. Where things are stuck for us: …',
   },
@@ -43,16 +44,23 @@ export const en: DeepPartial<Dict> = {
         title: 'Project management',
         line: 'Getting stalled or delayed projects moving again, and making the result land in the organisation.',
         more: 'More about project management',
+        problem: 'The project is stuck',
+        problemLine: 'Project management to get a grip on planning, risks, decision-making and results again.',
       },
       itConsultancy: {
         title: 'IT/IV consultancy & operations',
         line: 'From reactive firefighting to an operations team that gets a grip and keeps it.',
         more: 'More about IT/IV consultancy',
+        problem: 'Operations are out of control',
+        problemLine:
+          'IT/IV consultancy to organise operations, processes, information and responsibilities better.',
       },
       agileCoaching: {
         title: 'Agile coaching & product ownership',
         line: 'Teams that do more than "do Scrum": they deliver value predictably.',
         more: 'More about agile coaching',
+        problem: "The team isn't delivering",
+        problemLine: 'Agile coaching to improve collaboration, ownership and predictability.',
       },
     },
   },
@@ -68,12 +76,14 @@ export const en: DeepPartial<Dict> = {
         'Goudboom helps organisations with complex IT and organisational issues, from project management and consultancy to agile coaching.',
     },
     hero: {
-      eyebrow: 'Slagkracht. Transformatie. Impact.',
-      title: 'Complex IT and organisational issues, moving again.',
+      // The English site carries its own slogan; the Dutch one is explained word by word on the About page.
+      eyebrow: 'Getting things moving. Making change stick.',
+      title: 'For organisations where projects slow down, operations struggle and teams lose direction.',
       text: 'Goudboom helps organisations with projects that have stalled, operations teams losing their grip and teams that no longer move forward. With structure where it is needed, agility where it is possible, and always an eye for what comes next.',
+      secondary: 'Want to see what I do first?',
       proof: [
-        'Over 9 years of experience',
-        'Aviation, justice, healthcare and the public sector',
+        'Aviation, defence, justice, healthcare and the public sector',
+        'Project management, IT/IV and Agile',
         'PRINCE2 · ITIL · SAFe',
       ],
     },
@@ -81,15 +91,15 @@ export const en: DeepPartial<Dict> = {
       title: 'Does this sound familiar?',
       items: [
         'A project is months behind, and nobody knows exactly why any more.',
-        'Client and supplier point at each other. The atmosphere has soured.',
         'Your team is firefighting instead of moving forward.',
+        'Client and supplier point at each other. The atmosphere has soured.',
         'Another consultant joins, and when they leave, the knowledge leaves with them.',
       ],
       closing:
-        'I am Yuri van der Putten. Managers call me when things are stuck. I stay at the helm until it stands, not until the report is finished.',
+        'I am Yuri van der Putten. Managers call me when things get stuck. I stay involved until it works, not until the report is finished.',
     },
     services: {
-      title: 'One problem, three angles',
+      title: 'Where is it getting stuck?',
     },
     approach: {
       title: 'How I work',
@@ -103,7 +113,7 @@ export const en: DeepPartial<Dict> = {
           text: 'A clear picture of the real problem, what "done" means and what the first step is.',
         },
         {
-          title: 'Getting to work, with handover from day one.',
+          title: 'Delivery & handover.',
           text: 'I deliver and build the handover as I go, so that what I leave behind keeps standing.',
         },
       ],

@@ -12,17 +12,24 @@ interface Props {
   exclude?: ServiceKey;
   /** Show only this service (used on inspiration items). */
   only?: ServiceKey;
+  /** 'problem' leads with the reader's problem instead of the service name (Home). */
+  variant?: 'service' | 'problem';
 }
 
-const { lang, headingLevel = 'h3', exclude, only } = Astro.props;
+const { lang, headingLevel = 'h3', exclude, only, variant = 'service' } = Astro.props;
 const ui = t(lang);
 const Heading = headingLevel;
 
 const keys: ServiceKey[] = ['projectManagement', 'itConsultancy', 'agileCoaching'];
-const cards = keys.filter((key) => key !== exclude && (!only || key === only)).map((key) => ({
-  ...ui.services.items[key],
-  url: href(key, lang),
-}));
+const cards = keys.filter((key) => key !== exclude && (!only || key === only)).map((key) => {
+  const item = ui.services.items[key];
+  return {
+    title: variant === 'problem' ? item.problem : item.title,
+    line: variant === 'problem' ? item.problemLine : item.line,
+    more: item.more,
+    url: href(key, lang),
+  };
+});
 ---
 
 <ul class:list={['service-cards', { 'service-cards--two': cards.length === 2, 'service-cards--one': cards.length === 1 }]}>

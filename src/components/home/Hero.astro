@@ -1,14 +1,19 @@
 ---
 import Button from '../Button.astro';
+import Arrow from '../Arrow.astro';
 import { site, lunchMailto } from '../../site.config';
-import { t, type Lang } from '../../i18n';
+import { t, href, type Lang } from '../../i18n';
 
 interface Props {
   lang: Lang;
 }
 
-const ui = t(Astro.props.lang);
+const { lang } = Astro.props;
+const ui = t(lang);
 const hero = ui.home.hero;
+// Until there is a praktijkvoorbeelden page of its own, the second route points at the
+// services overview, where every service page carries its cases under "Uit de praktijk".
+const casesUrl = href('services', lang);
 ---
 
 <section class="hero" aria-labelledby="hero-title">
@@ -21,6 +26,13 @@ const hero = ui.home.hero;
         <Button href={lunchMailto(ui.cta.lunchSubject, ui.cta.lunchBody)}>{ui.cta.lunch}</Button>
         <Button href={site.phoneHref} variant="secondary">{ui.cta.call}</Button>
       </div>
+      <p class="hero__second-route">
+        {hero.secondary}{' '}
+        <a href={casesUrl}>
+          {ui.cta.caseStudy}
+          <Arrow />
+        </a>
+      </p>
     </div>
     <ul class="hero__proof">
       {hero.proof.map((item) => <li>{item}</li>)}
@@ -69,6 +81,23 @@ const hero = ui.home.hero;
     flex-wrap: wrap;
     gap: var(--s-3);
     margin-top: var(--s-2);
+  }
+
+  /* Second route: stays visible on phones, where the call bar carries the two buttons */
+  .hero__second-route {
+    font-size: var(--fs-s);
+    color: var(--c-ink-muted);
+  }
+
+  .hero__second-route a {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--s-2);
+    font-weight: var(--w-bold);
+    color: var(--c-ink);
+    text-decoration-color: var(--c-gold);
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
   }
 
   .hero__proof {

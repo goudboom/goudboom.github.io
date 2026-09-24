@@ -23,6 +23,7 @@ export const nl = {
     lunch: 'Plan een kennismakingslunch',
     lunchShort: 'Plan een lunch',
     call: 'Bel direct',
+    caseStudy: 'Lees een praktijkvoorbeeld',
     lunchSubject: 'Kennismakingslunch',
     lunchBody: 'Hoi Yuri, ik wil graag eens lunchen. Waar het bij ons knelt: …',
   },
@@ -33,20 +34,30 @@ export const nl = {
   },
   services: {
     items: {
+      // `problem` and `problemLine` are used in the "Waar zit het probleem?" band on Home,
+      // where the visitor reasons from their own problem first and from the service second.
       projectManagement: {
         title: 'Projectmanagement',
         line: 'Projecten die vastzitten of achterlopen weer vlottrekken, en ze laten landen in de organisatie.',
         more: 'Meer over projectmanagement',
+        problem: 'Het project loopt vast',
+        problemLine:
+          'Projectmanagement om weer grip te krijgen op planning, risico\'s, besluitvorming en resultaat.',
       },
       itConsultancy: {
         title: 'IT/IV-consultancy & beheer',
         line: 'Van reactief brandjes blussen naar een beheerorganisatie die grip heeft en houdt.',
         more: 'Meer over IT/IV-consultancy',
+        problem: 'Grip op beheer ontbreekt',
+        problemLine:
+          'IT/IV-consultancy om beheer, processen, informatie en verantwoordelijkheden beter te organiseren.',
       },
       agileCoaching: {
         title: 'Agile coaching & product ownership',
         line: 'Teams die niet alleen "Scrum doen", maar voorspelbaar waarde leveren.',
         more: 'Meer over agile coaching',
+        problem: 'Het team levert niet',
+        problemLine: 'Agile coaching om samenwerking, eigenaarschap en voorspelbaarheid te verbeteren.',
       },
     },
   },
@@ -107,11 +118,13 @@ export const nl = {
     hero: {
       eyebrow: 'Slagkracht. Transformatie. Impact.',
       // \u00AD = soft hyphen, so the long compound can break on narrow screens
-      title: 'Complexe IT- en organisatie\u00ADvraagstukken weer in beweging.',
+      title: 'Voor organisaties waar projecten vertragen, beheer piept en samen\u00ADwerking schuurt.',
       text: 'Goudboom helpt organisaties bij projecten die vastlopen, beheerorganisaties die grip verliezen en teams die niet meer vooruitkomen. Met structuur waar het nodig is, wendbaarheid waar het kan, en altijd met oog voor wat er daarna nodig is.',
+      // Second route for visitors who are not ready to call or mail yet.
+      secondary: 'Wil je eerst zien wat ik doe?',
       proof: [
-        'Ruim 9 jaar ervaring',
-        'Luchtvaart, justitie, zorg en publieke sector',
+        'Luchtvaart, Defensie, justitie, zorg en publieke sector',
+        'Projectmanagement, IT/IV en Agile',
         'PRINCE2 · ITIL · SAFe',
       ],
     },
@@ -119,8 +132,8 @@ export const nl = {
       title: 'Herken je dit?',
       items: [
         'Een project loopt maanden achter, en niemand weet nog precies waarom.',
-        'Klant en leverancier wijzen naar elkaar. De sfeer is verziekt.',
         'Je team blust brandjes in plaats van vooruit te werken.',
+        'Klant en leverancier wijzen naar elkaar. De sfeer is verziekt.',
         'Er komt steeds weer een consultant bij, en als die vertrekt, vertrekt de kennis mee.',
       ],
       closing:
@@ -148,7 +161,7 @@ export const nl = {
       ],
     },
     services: {
-      title: 'Eén probleem, drie invalshoeken',
+      title: 'Waar zit het probleem?',
     },
     approach: {
       title: 'Zo werk ik',
@@ -162,7 +175,7 @@ export const nl = {
           text: 'Een helder beeld van het echte probleem, wat "klaar" betekent en wat de eerste stap is.',
         },
         {
-          title: 'Aan de slag, met borging vanaf dag één.',
+          title: 'Uitvoering & borging.',
           text: 'Ik lever op en bouw ondertussen aan de overdracht, zodat wat ik achterlaat blijft staan.',
         },
       ],

@@ -69,6 +69,8 @@ export async function buildLlmsFull(): Promise<string> {
   h(3, home.recognize.title);
   list(home.recognize.items);
   p(home.recognize.closing);
+  h(3, home.services.title);
+  list(serviceKeys.map((key) => `${nl.services.items[key].problem}: ${nl.services.items[key].problemLine}`));
   h(3, home.approach.title);
   list(home.approach.steps.map((step) => `${step.title} ${step.text}`));
   h(3, home.vision.title);
