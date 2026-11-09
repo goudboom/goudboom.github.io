@@ -71,7 +71,7 @@ export const en: DeepPartial<Dict> = {
   },
   home: {
     seo: {
-      title: 'Goudboom Adviesbureau — complex IT and organisational issues',
+      title: 'Goudboom Adviesbureau: complex IT and organisational issues',
       description:
         'Goudboom helps organisations with complex IT and organisational issues, from project management and consultancy to agile coaching.',
     },
@@ -181,7 +181,7 @@ export const en: DeepPartial<Dict> = {
 
   servicesOverview: {
     seo: {
-      title: 'Services — project management, IT/IV consultancy and agile coaching',
+      title: 'Services: project management, IT/IV consultancy and agile coaching',
       description:
         'Three angles on one problem: getting complex IT and organisational issues moving again, and making sure they keep working.',
     },
@@ -433,11 +433,11 @@ export const en: DeepPartial<Dict> = {
         title: 'Slagkracht. Transformatie. Impact.',
         items: [
           {
-            term: 'Slagkracht — the power to act.',
+            term: 'Slagkracht: the power to act.',
             text: 'The ability to actually get things done. Using potential, removing obstacles and getting people moving. So that a stronger team, a more skilled individual or a more robust process really can take on more.',
           },
           {
-            term: 'Transformatie — transformation.',
+            term: 'Transformatie: transformation.',
             text: 'Change asks for more than a new plan. Growing complexity and unpredictability require people, teams and organisations to keep adapting. Not changing for the sake of change, but in order to move on.',
           },
           {

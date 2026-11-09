@@ -59,7 +59,7 @@ export async function buildLlmsFull(): Promise<string> {
   const p = (...texts: string[]) => texts.forEach((text) => out.push(clean(text), ''));
   const list = (items: string[]) => out.push(...items.map((item) => `- ${clean(item)}`), '');
 
-  out.push(`# ${site.name} — volledige inhoud`, '');
+  out.push(`# ${site.name}: volledige inhoud`, '');
   p(`Bron: ${site.url}/ · ${site.owner} · ${site.city} · KvK ${site.kvk} · ${site.email} · ${site.phoneDisplay}`);
 
   // Home
@@ -131,7 +131,7 @@ export async function buildLlmsFull(): Promise<string> {
   h(4, about.facts.title);
   list([about.facts.experience, `${about.facts.sectorsLabel}: ${about.facts.sectors.join(', ')}`, about.facts.location]);
   h(4, about.credentials.title);
-  list(about.credentials.education.map((e) => `${e.name} — ${e.school} (${e.years})`));
+  list(about.credentials.education.map((e) => `${e.name}, ${e.school} (${e.years})`));
   list(about.credentials.groups.map((g) => `${g.field}: ${g.items.join(' · ')}`));
 
   // Inspiratiebank
@@ -144,7 +144,7 @@ export async function buildLlmsFull(): Promise<string> {
       `${forms[item.data.vorm]} · ${categories[item.data.categorie]} · ${abs(`/inspiratiebank/${item.id}/`)}`,
       plainText(item.body),
     );
-    if (item.data.bron) p(`— ${item.data.bron}`);
+    if (item.data.bron) p(`Bron: ${item.data.bron}`);
     if (item.data.toelichting) p(...paragraphs(item.data.toelichting));
   }
 

@@ -25,7 +25,7 @@ const alternates = routeKey
 const hasAlternates = alternates.length > 1;
 // Default share image in the house style (1200×630), rendered from the Home hero text.
 const ogImage = `${site.url}/og/goudboom.png`;
-const ogImageAlt = `${site.name} — ${t(lang).home.hero.title.replace(/\u00AD/g, '')}`;
+const ogImageAlt = `${site.name}: ${t(lang).home.hero.title.replace(/\u00AD/g, '')}`;
 const graph = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 ---
 

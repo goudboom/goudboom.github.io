@@ -66,7 +66,7 @@ export const nl = {
     randomMicrocopy: 'Even iets anders om over na te denken.',
     toOverview: 'Naar de Inspiratiebank',
     seo: {
-      title: 'Inspiratiebank — denkkaders en reflectievragen | Goudboom',
+      title: 'Inspiratiebank: denkkaders en reflectievragen | Goudboom',
       description:
         'Ideeën, vragen, denkkaders en observaties om anders naar werk, teams en verandering te kijken.',
     },
@@ -88,11 +88,11 @@ export const nl = {
     },
     category: {
       intro: 'Ideeën, vragen, denkkaders en observaties over {categorie}.',
-      seoTitle: '{Categorie} — Inspiratiebank | Goudboom',
+      seoTitle: '{Categorie} | Inspiratiebank | Goudboom',
       allCategories: 'Alle categorieën',
     },
     item: {
-      seoTitle: '{Titel} — Inspiratiebank | Goudboom',
+      seoTitle: '{Titel} | Inspiratiebank | Goudboom',
       prev: 'Vorige',
       next: 'Volgende',
       random: 'Random',
@@ -111,7 +111,7 @@ export const nl = {
   },
   home: {
     seo: {
-      title: 'Goudboom Adviesbureau — complexe IT- en organisatievraagstukken',
+      title: 'Goudboom Adviesbureau: complexe IT- en organisatievraagstukken',
       description:
         'Slagkracht. Transformatie. Impact. Goudboom helpt organisaties met complexe IT- en organisatievraagstukken, van projectmanagement en consultancy tot agile coaching.',
     },
@@ -243,7 +243,7 @@ export const nl = {
 
   servicesOverview: {
     seo: {
-      title: 'Diensten — projectmanagement, IT/IV-consultancy en agile coaching | Goudboom',
+      title: 'Diensten: projectmanagement, IT/IV-consultancy en agile coaching | Goudboom',
       description:
         'Drie invalshoeken op één probleem: complexe IT- en organisatievraagstukken weer in beweging brengen, en zorgen dat het blijft werken.',
     },

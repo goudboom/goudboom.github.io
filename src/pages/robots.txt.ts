@@ -18,6 +18,6 @@ const agents = [
 
 export const GET: APIRoute = () => {
   const groups = agents.map((agent) => `User-agent: ${agent}\nAllow: /`).join('\n\n');
-  const body = `# ${site.name} — zoekmachines en AI-assistenten zijn welkom.\n\n${groups}\n\nUser-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap-index.xml\n`;
+  const body = `# ${site.name}: zoekmachines en AI-assistenten zijn welkom.\n\n${groups}\n\nUser-agent: *\nAllow: /\n\nSitemap: ${site.url}/sitemap-index.xml\n`;
   return new Response(body, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
 };

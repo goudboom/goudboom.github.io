@@ -8,7 +8,7 @@ const { bron } = Astro.props;
 
 <figure class="blk-citaat">
   <blockquote><slot /></blockquote>
-  {bron && <figcaption>— {bron}</figcaption>}
+  {bron && <figcaption>{bron}</figcaption>}
 </figure>
 
 <style>
