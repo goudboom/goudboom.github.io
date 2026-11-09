@@ -16,3 +16,6 @@ Logos/*.ai
 *.log
 .DS_Store
 Thumbs.db
+
+# project instructions for Claude Code - local only
+CLAUDE.md
